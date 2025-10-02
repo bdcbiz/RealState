@@ -2,8 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\CompanyAccountResource\Pages;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,21 +10,20 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class CompanyAccountResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?string $navigationGroup = 'User Management';
 
-    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $navigationLabel = 'Companies';
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereIn('role', ['user', 'buyer']);
+        return parent::getEloquentQuery()->where('role', 'company');
     }
 
     public static function form(Form $form): Form
@@ -35,7 +33,7 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Full Name'),
+                    ->label('Company Name'),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
@@ -46,8 +44,13 @@ class UserResource extends Resource
                     ->tel()
                     ->maxLength(255)
                     ->label('Phone Number'),
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('company-images')
+                    ->label('Company Logo'),
                 Forms\Components\Hidden::make('role')
-                    ->default('user'),
+                    ->default('company'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
                     ->label('Email Verified At'),
                 Forms\Components\TextInput::make('password')
@@ -71,7 +74,12 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->disk('public')
+                    ->label('Logo')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Company Name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
@@ -86,6 +94,7 @@ class UserResource extends Resource
                         'success' => 'admin',
                         'warning' => 'agent',
                         'primary' => 'owner',
+                        'info' => 'company',
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
@@ -126,9 +135,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListCompanyAccounts::route('/'),
+            'create' => Pages\CreateCompanyAccount::route('/create'),
+            'edit' => Pages\EditCompanyAccount::route('/{record}/edit'),
         ];
     }
 }

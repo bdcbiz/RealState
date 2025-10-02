@@ -2,8 +2,7 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\SuperAdminResource\Pages;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,21 +10,20 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class SuperAdminResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
     protected static ?string $navigationGroup = 'User Management';
 
-    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $navigationLabel = 'Super Admins';
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereIn('role', ['user', 'buyer']);
+        return parent::getEloquentQuery()->whereIn('role', ['admin', 'owner']);
     }
 
     public static function form(Form $form): Form
@@ -47,7 +45,7 @@ class UserResource extends Resource
                     ->maxLength(255)
                     ->label('Phone Number'),
                 Forms\Components\Hidden::make('role')
-                    ->default('user'),
+                    ->default('admin'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
                     ->label('Email Verified At'),
                 Forms\Components\TextInput::make('password')
@@ -126,9 +124,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListSuperAdmins::route('/'),
+            'create' => Pages\CreateSuperAdmin::route('/create'),
+            'edit' => Pages\EditSuperAdmin::route('/{record}/edit'),
         ];
     }
 }

@@ -16,7 +16,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:255',
-            'role' => 'required|string|in:user,admin,agent,owner',
+            'role' => 'required|string|in:buyer,company',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -51,14 +51,11 @@ class AuthController extends Controller
             $emailSent = false;
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
             'success' => true,
             'message' => 'Registration successful. Please check your email to verify your account.',
             'data' => [
                 'user' => $user,
-                'token' => $token,
                 'email_sent' => $emailSent,
                 'verification_url' => $verificationUrl, // For testing
             ]
