@@ -11,6 +11,7 @@ class Unit extends Model
 
     protected $fillable = [
         'compound_id',
+        'buyer_id',
         'unit_name',
         'building_name',
         'unit_number',
@@ -35,6 +36,7 @@ class Unit extends Model
         'pergola_area',
         'storage_area',
         'extra_built_up_area',
+        'is_sold',
     ];
 
     protected $hidden = [
@@ -42,8 +44,17 @@ class Unit extends Model
         'updated_at',
     ];
 
+    protected $casts = [
+        'is_sold' => 'boolean',
+    ];
+
     public function compound()
     {
         return $this->belongsTo(Compound::class);
+    }
+
+    public function buyer()
+    {
+        return $this->belongsTo(User::class, 'buyer_id');
     }
 }

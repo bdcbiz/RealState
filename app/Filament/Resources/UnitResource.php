@@ -102,9 +102,9 @@ class UnitResource extends Resource
                 Forms\Components\TextInput::make('extra_built_up_area')
                     ->numeric()
                     ->default(null),
-                Forms\Components\TextInput::make('compound_name')
-                    ->maxLength(255)
-                    ->default(null),
+                Forms\Components\Toggle::make('is_sold')
+                    ->label('Sold')
+                    ->default(false),
             ]);
     }
 
@@ -186,6 +186,10 @@ class UnitResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('extra_built_up_area')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\IconColumn::make('is_sold')
+                    ->label('Sold')
+                    ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

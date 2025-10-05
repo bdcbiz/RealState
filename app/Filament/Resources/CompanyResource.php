@@ -31,6 +31,12 @@ class CompanyResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->label('Company Name'),
+                Forms\Components\FileUpload::make('logo')
+                    ->image()
+                    ->disk('public')
+                    ->directory('company-logos')
+                    ->label('Company Logo')
+                    ->imageEditor(),
                 Forms\Components\TextInput::make('number_of_compounds')
                     ->numeric()
                     ->default(0)
@@ -46,6 +52,10 @@ class CompanyResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('logo')
+                    ->disk('public')
+                    ->label('Logo')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -61,11 +71,11 @@ class CompanyResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //

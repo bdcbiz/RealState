@@ -25,7 +25,7 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereIn('role', ['user', 'buyer']);
+        return parent::getEloquentQuery()->where('role', 'buyer');
     }
 
     public static function form(Form $form): Form
@@ -46,8 +46,22 @@ class UserResource extends Resource
                     ->tel()
                     ->maxLength(255)
                     ->label('Phone Number'),
-                Forms\Components\Hidden::make('role')
-                    ->default('user'),
+                Forms\Components\Select::make('role')
+                    ->options([
+                        'buyer' => 'Buyer',
+                        'company' => 'Company',
+                        'admin' => 'Admin',
+                    ])
+                    ->default('buyer')
+                    ->required()
+                    ->reactive()
+                    ->label('Role'),
+                Forms\Components\FileUpload::make('image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('user-images')
+                    ->label('Profile Image')
+                    ->visible(fn (Forms\Get $get) => $get('role') === 'company'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
                     ->label('Email Verified At'),
                 Forms\Components\TextInput::make('password')
@@ -71,6 +85,10 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->disk('public')
+                    ->label('Image')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
@@ -82,10 +100,9 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('role')
                     ->colors([
-                        'secondary' => 'user',
+                        'secondary' => 'buyer',
                         'success' => 'admin',
-                        'warning' => 'agent',
-                        'primary' => 'owner',
+                        'info' => 'company',
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
@@ -97,11 +114,11 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //

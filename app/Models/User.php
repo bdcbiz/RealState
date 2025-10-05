@@ -25,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'image',
         'role',
+        'company_id',
         'is_verified',
         'is_banned',
         'verification_token',
@@ -54,5 +55,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function purchasedUnits()
+    {
+        return $this->hasMany(Unit::class, 'buyer_id');
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        // For company users, show company logo
+        if ($this->role === 'company' && $this->company && $this->company->logo) {
+            return url('storage/' . $this->company->logo);
+        }
+
+        // For other users, show their profile image
+        return $this->image ? url('storage/' . $this->image) : null;
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->name;
     }
 }
