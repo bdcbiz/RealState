@@ -9,17 +9,33 @@ use App\Models\Unit;
 use App\Models\Sale;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
     /**
+     * Clean data by removing columns that don't exist in the database
+     */
+    private function cleanData(array $data, string $table): array
+    {
+        $columns = Schema::getColumnListing($table);
+        $cleaned = [];
+        
+        foreach ($data as $key => $value) {
+            if (in_array($key, $columns)) {
+                $cleaned[$key] = $value;
+            }
+        }
+        
+        return $cleaned;
+    }
+
+    /**
      * Seed the application's database with complete data.
-     * This seeder contains all the data from the production database.
      */
     public function run(): void
     {
-        // Disable foreign key checks to avoid constraint errors
+        // Disable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         // Clear existing data
@@ -43,40 +59,47 @@ class DatabaseSeeder extends Seeder
         // Seed Companies
         $this->command->info('Seeding companies...');
         foreach ($companiesData as $company) {
-            Company::create($company);
+            $cleanCompany = $this->cleanData($company, 'companies');
+            DB::table('companies')->insert($cleanCompany);
         }
         $this->command->info('✓ Seeded ' . count($companiesData) . ' companies');
 
         // Seed Compounds
         $this->command->info('Seeding compounds...');
         foreach ($compoundsData as $compound) {
-            Compound::create($compound);
+            $cleanCompound = $this->cleanData($compound, 'compounds');
+            DB::table('compounds')->insert($cleanCompound);
         }
         $this->command->info('✓ Seeded ' . count($compoundsData) . ' compounds');
 
-        // Seed Units (in chunks to handle large data)
+        // Seed Units (in chunks)
         $this->command->info('Seeding units...');
         $unitsChunks = array_chunk($unitsData, 500);
-        foreach ($unitsChunks as $index => $chunk) {
+        $processed = 0;
+        foreach ($unitsChunks as $chunk) {
+            $cleanUnits = [];
             foreach ($chunk as $unit) {
-                Unit::create($unit);
+                $cleanUnits[] = $this->cleanData($unit, 'units');
             }
-            $this->command->info('  Processed ' . (($index + 1) * 500) . ' units...');
+            DB::table('units')->insert($cleanUnits);
+            $processed += count($chunk);
+            $this->command->info('  Processed ' . $processed . ' units...');
         }
         $this->command->info('✓ Seeded ' . count($unitsData) . ' units');
 
         // Seed Sales
         $this->command->info('Seeding sales...');
         foreach ($salesData as $sale) {
-            Sale::create($sale);
+            $cleanSale = $this->cleanData($sale, 'sales');
+            DB::table('sales')->insert($cleanSale);
         }
         $this->command->info('✓ Seeded ' . count($salesData) . ' sales');
 
         // Seed Users
         $this->command->info('Seeding users...');
         foreach ($usersData as $user) {
-            // Password is already hashed in the export
-            User::create($user);
+            $cleanUser = $this->cleanData($user, 'users');
+            DB::table('users')->insert($cleanUser);
         }
         $this->command->info('✓ Seeded ' . count($usersData) . ' users');
 
