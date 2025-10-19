@@ -1,0 +1,344 @@
+[
+    {
+        "id": 1,
+        "name": "Badya",
+        "name_ar": "شركة التطوير العقاري",
+        "name_en": "Badya",
+        "logo": "company-images\/01K7BNRRA0WVQ0SXMN56CHA9VG.png",
+        "sales_ids": null,
+        "email": "company@test.com",
+        "number_of_compounds": 1,
+        "number_of_available_units": 485,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-18T09:53:57.000000Z",
+        "logo_url": "http:\/\/127.0.0.1:8001\/storage\/company-images\/01K7BNRRA0WVQ0SXMN56CHA9VG.png",
+        "name_translated": {
+            "en": "Badya",
+            "ar": "شركة التطوير العقاري"
+        },
+        "name_localized": "Badya"
+    },
+    {
+        "id": 2,
+        "name": "Bamboo III",
+        "name_ar": null,
+        "name_en": "Bamboo III",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 84,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Bamboo III",
+            "ar": "Bamboo III"
+        },
+        "name_localized": "Bamboo III"
+    },
+    {
+        "id": 3,
+        "name": "Capital Gardens",
+        "name_ar": null,
+        "name_en": "Capital Gardens",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 3,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Capital Gardens",
+            "ar": "Capital Gardens"
+        },
+        "name_localized": "Capital Gardens"
+    },
+    {
+        "id": 4,
+        "name": "Club Views",
+        "name_ar": null,
+        "name_en": "Club Views",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 341,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Club Views",
+            "ar": "Club Views"
+        },
+        "name_localized": "Club Views"
+    },
+    {
+        "id": 5,
+        "name": "ELAN",
+        "name_ar": null,
+        "name_en": "ELAN",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 61,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "ELAN",
+            "ar": "ELAN"
+        },
+        "name_localized": "ELAN"
+    },
+    {
+        "id": 6,
+        "name": "esse residence",
+        "name_ar": null,
+        "name_en": "esse residence",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 229,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "esse residence",
+            "ar": "esse residence"
+        },
+        "name_localized": "esse residence"
+    },
+    {
+        "id": 12,
+        "name": "ORIGAMI",
+        "name_ar": null,
+        "name_en": "ORIGAMI",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 8,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "ORIGAMI",
+            "ar": "ORIGAMI"
+        },
+        "name_localized": "ORIGAMI"
+    },
+    {
+        "id": 16,
+        "name": "Palm Parks",
+        "name_ar": null,
+        "name_en": "Palm Parks",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 10,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Palm Parks",
+            "ar": "Palm Parks"
+        },
+        "name_localized": "Palm Parks"
+    },
+    {
+        "id": 17,
+        "name": "PHNC Commercial",
+        "name_ar": null,
+        "name_en": "PHNC Commercial",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 95,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "PHNC Commercial",
+            "ar": "PHNC Commercial"
+        },
+        "name_localized": "PHNC Commercial"
+    },
+    {
+        "id": 18,
+        "name": "PX",
+        "name_ar": null,
+        "name_en": "PX",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 336,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "PX",
+            "ar": "PX"
+        },
+        "name_localized": "PX"
+    },
+    {
+        "id": 19,
+        "name": "RAI",
+        "name_ar": null,
+        "name_en": "RAI",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 3,
+        "number_of_available_units": 52,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "RAI",
+            "ar": "RAI"
+        },
+        "name_localized": "RAI"
+    },
+    {
+        "id": 22,
+        "name": "Sheya Residence",
+        "name_ar": null,
+        "name_en": "Sheya Residence",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 46,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Sheya Residence",
+            "ar": "Sheya Residence"
+        },
+        "name_localized": "Sheya Residence"
+    },
+    {
+        "id": 23,
+        "name": "TALALA",
+        "name_ar": null,
+        "name_en": "TALALA",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 1788,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "TALALA",
+            "ar": "TALALA"
+        },
+        "name_localized": "TALALA"
+    },
+    {
+        "id": 24,
+        "name": "The Butterfly",
+        "name_ar": null,
+        "name_en": "The Butterfly",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 595,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "The Butterfly",
+            "ar": "The Butterfly"
+        },
+        "name_localized": "The Butterfly"
+    },
+    {
+        "id": 25,
+        "name": "The Crown",
+        "name_ar": null,
+        "name_en": "The Crown",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 5,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "The Crown",
+            "ar": "The Crown"
+        },
+        "name_localized": "The Crown"
+    },
+    {
+        "id": 26,
+        "name": "Zahw Assuit",
+        "name_ar": null,
+        "name_en": "Zahw Assuit",
+        "logo": null,
+        "sales_ids": null,
+        "email": "",
+        "number_of_compounds": 1,
+        "number_of_available_units": 77,
+        "created_at": "2025-10-02T17:08:32.000000Z",
+        "updated_at": "2025-10-02T17:08:32.000000Z",
+        "logo_url": null,
+        "name_translated": {
+            "en": "Zahw Assuit",
+            "ar": "Zahw Assuit"
+        },
+        "name_localized": "Zahw Assuit"
+    },
+    {
+        "id": 32,
+        "name": "Hacienda",
+        "name_ar": null,
+        "name_en": "Hacienda",
+        "logo": "company-images\/01K79J7KAE3YS4C9RR5TMN37KK.png",
+        "sales_ids": null,
+        "email": "agent1@gmail.com",
+        "number_of_compounds": 5,
+        "number_of_available_units": 391,
+        "created_at": "2025-10-02T17:32:57.000000Z",
+        "updated_at": "2025-10-18T09:56:51.000000Z",
+        "logo_url": "http:\/\/127.0.0.1:8001\/storage\/company-images\/01K79J7KAE3YS4C9RR5TMN37KK.png",
+        "name_translated": {
+            "en": "Hacienda",
+            "ar": "Hacienda"
+        },
+        "name_localized": "Hacienda"
+    },
+    {
+        "id": 33,
+        "name": "Palm Hills",
+        "name_ar": null,
+        "name_en": "Palm Hills",
+        "logo": "company-images\/01K6JHK237SVTHQDC62G72SZW9.png",
+        "sales_ids": "[26, 27]",
+        "email": "Palm@gmail.com",
+        "number_of_compounds": 3,
+        "number_of_available_units": 861,
+        "created_at": "2025-10-02T17:32:57.000000Z",
+        "updated_at": "2025-10-18T09:56:51.000000Z",
+        "logo_url": "http:\/\/127.0.0.1:8001\/storage\/company-images\/01K6JHK237SVTHQDC62G72SZW9.png",
+        "name_translated": {
+            "en": "Palm Hills",
+            "ar": "Palm Hills"
+        },
+        "name_localized": "Palm Hills"
+    }
+]
