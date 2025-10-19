@@ -11,6 +11,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
@@ -18,14 +19,14 @@ class DatabaseSeeder extends Seeder
     /**
      * Clean data and fix datetime formats
      */
-    private function cleanData(array $data, string $table): array
+    private function cleanData(array $data, string $table, int $index = 0): array
     {
         $columns = Schema::getColumnListing($table);
         $cleaned = [];
         
         foreach ($data as $key => $value) {
             if (in_array($key, $columns)) {
-                // Fix datetime format (convert ISO 8601 to MySQL format)
+                // Fix datetime format
                 if ($value && in_array($key, ['created_at', 'updated_at', 'deleted_at', 'email_verified_at'])) {
                     try {
                         $cleaned[$key] = Carbon::parse($value)->format('Y-m-d H:i:s');
@@ -38,9 +39,16 @@ class DatabaseSeeder extends Seeder
             }
         }
         
-        // Add default password for companies if missing
-        if ($table === 'companies' && !isset($cleaned['password'])) {
-            $cleaned['password'] = Hash::make('password123');
+        // Fix empty or duplicate emails for companies
+        if ($table === 'companies') {
+            if (empty($cleaned['email']) || $cleaned['email'] === '') {
+                $cleanedName = Str::slug($cleaned['name'] ?? 'company');
+                $cleaned['email'] = $cleanedName . '_' . $cleaned['id'] . '@company.local';
+            }
+            // Add default password if missing
+            if (!isset($cleaned['password'])) {
+                $cleaned['password'] = Hash::make('password123');
+            }
         }
         
         return $cleaned;
@@ -74,16 +82,16 @@ class DatabaseSeeder extends Seeder
 
         // Seed Companies
         $this->command->info('Seeding companies...');
-        foreach ($companiesData as $company) {
-            $cleanCompany = $this->cleanData($company, 'companies');
+        foreach ($companiesData as $index => $company) {
+            $cleanCompany = $this->cleanData($company, 'companies', $index);
             DB::table('companies')->insert($cleanCompany);
         }
         $this->command->info('✓ Seeded ' . count($companiesData) . ' companies');
 
         // Seed Compounds
         $this->command->info('Seeding compounds...');
-        foreach ($compoundsData as $compound) {
-            $cleanCompound = $this->cleanData($compound, 'compounds');
+        foreach ($compoundsData as $index => $compound) {
+            $cleanCompound = $this->cleanData($compound, 'compounds', $index);
             DB::table('compounds')->insert($cleanCompound);
         }
         $this->command->info('✓ Seeded ' . count($compoundsData) . ' compounds');
@@ -94,8 +102,8 @@ class DatabaseSeeder extends Seeder
         $processed = 0;
         foreach ($unitsChunks as $chunk) {
             $cleanUnits = [];
-            foreach ($chunk as $unit) {
-                $cleanUnits[] = $this->cleanData($unit, 'units');
+            foreach ($chunk as $index => $unit) {
+                $cleanUnits[] = $this->cleanData($unit, 'units', $index);
             }
             DB::table('units')->insert($cleanUnits);
             $processed += count($chunk);
@@ -105,16 +113,16 @@ class DatabaseSeeder extends Seeder
 
         // Seed Sales
         $this->command->info('Seeding sales...');
-        foreach ($salesData as $sale) {
-            $cleanSale = $this->cleanData($sale, 'sales');
+        foreach ($salesData as $index => $sale) {
+            $cleanSale = $this->cleanData($sale, 'sales', $index);
             DB::table('sales')->insert($cleanSale);
         }
         $this->command->info('✓ Seeded ' . count($salesData) . ' sales');
 
         // Seed Users
         $this->command->info('Seeding users...');
-        foreach ($usersData as $user) {
-            $cleanUser = $this->cleanData($user, 'users');
+        foreach ($usersData as $index => $user) {
+            $cleanUser = $this->cleanData($user, 'users', $index);
             DB::table('users')->insert($cleanUser);
         }
         $this->command->info('✓ Seeded ' . count($usersData) . ' users');
