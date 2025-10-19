@@ -10,11 +10,12 @@ use App\Models\Sale;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Clean data by removing columns that don't exist in the database
+     * Clean data and fix datetime formats
      */
     private function cleanData(array $data, string $table): array
     {
@@ -23,7 +24,16 @@ class DatabaseSeeder extends Seeder
         
         foreach ($data as $key => $value) {
             if (in_array($key, $columns)) {
-                $cleaned[$key] = $value;
+                // Fix datetime format (convert ISO 8601 to MySQL format)
+                if ($value && in_array($key, ['created_at', 'updated_at', 'deleted_at', 'email_verified_at'])) {
+                    try {
+                        $cleaned[$key] = Carbon::parse($value)->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        $cleaned[$key] = $value;
+                    }
+                } else {
+                    $cleaned[$key] = $value;
+                }
             }
         }
         
