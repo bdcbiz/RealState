@@ -82,4 +82,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Unit::class, 'buyer_id');
     }
+
+    /**
+     * Determine if the user can access the Filament admin panel.
+     *
+     * By default, all authenticated users can access the panel.
+     * You can modify this to restrict access based on email, role, or other criteria.
+     *
+     * Examples:
+     * - return in_array($this->email, ['admin@example.com', 'manager@example.com']);
+     * - return $this->role === 'admin';
+     * - return true; // Allow all authenticated users
+     */
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        // Allow all authenticated users to access the admin panel
+        // Modify this logic to restrict access as needed
+        return true;
+    }
 }
