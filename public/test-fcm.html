@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCM Test Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .status-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .token-section {
+            background: #fff3cd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .token-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .note {
+            color: #856404;
+            font-size: 0.85em;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 5px;
+        }
+
+        .actions-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .response-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .response-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .response-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .response-content {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            color: #38ef7d;
+        }
+
+        .error {
+            color: #f5576c;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .current-user {
+            background: #e7f3ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+            text-align: center;
+        }
+
+        .current-user strong {
+            color: #1976d2;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 FCM Test Dashboard</h1>
+        <p class="subtitle">Firebase Cloud Messaging Testing Interface</p>
+
+        <!-- Current User Info -->
+        <div class="current-user">
+            <strong>Target User: joh@example.com</strong>
+            <p style="color: #666; margin-top: 5px; font-size: 0.9em;">All actions will affect this user account</p>
+        </div>
+
+        <!-- System Status -->
+        <div class="status-section">
+            <h2>📊 System Status</h2>
+            <div id="statusContent">
+                <div class="status-item">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Input Section -->
+        <div class="token-section">
+            <h3>📱 Update FCM Token</h3>
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="tokenInput"
+                    placeholder="Paste your FCM token from Flutter app here..."
+                >
+                <button class="btn btn-warning" onclick="updateToken()">
+                    Update Token
+                </button>
+            </div>
+            <div class="note">
+                <strong>💡 How to get your FCM token:</strong><br>
+                1. Open your Flutter app on the emulator<br>
+                2. Check the console/logs for the FCM token (starts with "fbqX..." or similar)<br>
+                3. Copy the entire token (150+ characters)<br>
+                4. Paste it above and click "Update Token"
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-section">
+            <button class="btn btn-primary" onclick="sendTestNotification()">
+                📨 Send Test Notification
+            </button>
+            <button class="btn btn-success" onclick="testUnitNotification()">
+                🏢 Create Test Unit
+            </button>
+            <button class="btn btn-info" onclick="testSaleNotification()">
+                💰 Create Test Sale
+            </button>
+            <button class="btn btn-warning" onclick="refreshStatus()">
+                🔄 Refresh Status
+            </button>
+        </div>
+
+        <!-- Response Section -->
+        <div class="response-section" id="responseSection">
+            <h3>📋 Response:</h3>
+            <div class="response-content" id="responseContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8001';
+
+        // Load status on page load
+        window.onload = function() {
+            loadStatus();
+        };
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/test-fcm/status`);
+                const data = await response.json();
+
+                let html = `
+                    <div class="status-item">
+                        <span class="status-label">FCM Enabled:</span>
+                        <span class="status-value ${data.fcm_enabled ? 'success' : 'error'}">
+                            ${data.fcm_enabled ? '✅ Yes' : '❌ No'}
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Credentials File:</span>
+                        <span class="status-value ${data.credentials_exists ? 'success' : 'error'}">
+                            ${data.credentials_exists ? '✅ Found' : '❌ Missing'}
+                        </span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Total Users:</span>
+                        <span class="status-value">${data.total_users}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Users with FCM Tokens:</span>
+                        <span class="status-value">${data.users_with_fcm_tokens}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Buyers with Tokens:</span>
+                        <span class="status-value">${data.buyers_with_tokens}</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Server Time:</span>
+                        <span class="status-value">${new Date(data.server_time).toLocaleString()}</span>
+                    </div>
+                `;
+
+                document.getElementById('statusContent').innerHTML = html;
+            } catch (error) {
+                document.getElementById('statusContent').innerHTML = `
+                    <div class="status-item">
+                        <span class="status-label error">Error:</span>
+                        <span class="status-value">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        function showResponse(data, isSuccess = true) {
+            const responseSection = document.getElementById('responseSection');
+            const responseContent = document.getElementById('responseContent');
+
+            responseContent.innerHTML = JSON.stringify(data, null, 2);
+            responseSection.classList.add('show');
+
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                responseSection.classList.remove('show');
+            }, 10000);
+        }
+
+        async function updateToken() {
+            const tokenInput = document.getElementById('tokenInput');
+            const token = tokenInput.value.trim();
+
+            if (!token) {
+                alert('⚠️ Please enter an FCM token');
+                return;
+            }
+
+            if (token.length < 100) {
+                if (!confirm('⚠️ Warning: This token looks too short. Real FCM tokens are usually 150+ characters.\n\nDo you want to continue anyway?')) {
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/test-fcm/add-token?token=${encodeURIComponent(token)}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showResponse(data, true);
+                    tokenInput.value = '';
+                    loadStatus();
+                    alert(`✅ Token updated successfully!\n\nUser: ${data.user_email}\nToken saved: ${token.substring(0, 30)}...`);
+                } else {
+                    showResponse(data, false);
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, false);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function sendTestNotification() {
+            const btn = event.target;
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Sending...';
+
+            try {
+                const response = await fetch(`${API_BASE}/test-fcm/send`);
+                const data = await response.json();
+
+                showResponse(data, data.success);
+
+                if (data.success) {
+                    alert(`✅ Test notification sent!\n\n${data.users_with_tokens} user(s) notified.\n\nCheck your Flutter emulator now!`);
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, false);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        async function testUnitNotification() {
+            const btn = event.target;
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/test-fcm/test-unit`);
+                const data = await response.json();
+
+                showResponse(data, data.success);
+
+                if (data.success) {
+                    alert(`✅ Test unit created!\n\nUnit: ${data.unit.unit_name}\nPrice: ${data.unit.normal_price}\n\nNotification sent automatically to all buyers.`);
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, false);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        async function testSaleNotification() {
+            const btn = event.target;
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Creating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/test-fcm/test-sale`);
+                const data = await response.json();
+
+                showResponse(data, data.success);
+
+                if (data.success) {
+                    alert(`✅ Test sale created!\n\nSale: ${data.sale.sale_name}\nDiscount: ${data.sale.discount_percentage}%\n\nNotification sent automatically to all buyers.`);
+                } else {
+                    alert('❌ Error: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                showResponse({ error: error.message }, false);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        function refreshStatus() {
+            loadStatus();
+            alert('✅ Status refreshed!');
+        }
+    </script>
+</body>
+</html>
