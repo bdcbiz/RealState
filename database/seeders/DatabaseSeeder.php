@@ -10,6 +10,7 @@ use App\Models\Sale;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
@@ -35,6 +36,11 @@ class DatabaseSeeder extends Seeder
                     $cleaned[$key] = $value;
                 }
             }
+        }
+        
+        // Add default password for companies if missing
+        if ($table === 'companies' && !isset($cleaned['password'])) {
+            $cleaned['password'] = Hash::make('password123');
         }
         
         return $cleaned;
