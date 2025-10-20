@@ -20,22 +20,22 @@ class SalesUserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('messages.User Management');
+        return __('admin.sales_team.navigation.group');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('messages.All Sales Team');
+        return __('admin.sales_team.navigation.label');
     }
 
     public static function getModelLabel(): string
     {
-        return __('messages.Sales Person');
+        return __('admin.sales_team.model.label');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('messages.All Sales Team');
+        return __('admin.sales_team.model.plural');
     }
 
     public static function getEloquentQuery(): Builder

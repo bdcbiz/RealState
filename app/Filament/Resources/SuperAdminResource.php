@@ -19,17 +19,22 @@ class SuperAdminResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('messages.User Management');
+        return __('admin.super_admins.navigation.group');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('messages.Super Admins');
+        return __('admin.super_admins.navigation.label');
     }
 
     public static function getModelLabel(): string
     {
-        return __('messages.Super Admins');
+        return __('admin.super_admins.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('admin.super_admins.model.plural');
     }
 
     public static function getEloquentQuery(): Builder

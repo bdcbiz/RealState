@@ -21,17 +21,22 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('messages.User Management');
+        return __('user.navigation.group');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('messages.Users');
+        return __('user.navigation.label');
     }
 
     public static function getModelLabel(): string
     {
-        return __('messages.Users');
+        return __('user.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('user.model.plural');
     }
 
     public static function getEloquentQuery(): Builder
@@ -46,47 +51,47 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label(__('messages.Full Name')),
+                    ->label(__('user.fields.name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label(__('messages.Email Address')),
+                    ->label(__('user.fields.email')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label(__('messages.Phone Number')),
+                    ->label(__('user.fields.phone')),
                 Forms\Components\Select::make('role')
                     ->options([
-                        'buyer' => __('messages.Buyer'),
-                        'company' => __('messages.Company'),
-                        'admin' => __('messages.Admin'),
+                        'buyer' => __('user.roles.buyer'),
+                        'company' => __('user.roles.company'),
+                        'admin' => __('user.roles.admin'),
                     ])
                     ->default('buyer')
                     ->required()
                     ->reactive()
-                    ->label(__('messages.Role')),
+                    ->label(__('user.fields.role')),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')
                     ->directory('user-images')
-                    ->label(__('messages.Profile Image'))
+                    ->label(__('user.fields.image'))
                     ->visible(fn (Forms\Get $get) => $get('role') === 'company'),
                 Forms\Components\Toggle::make('is_verified')
-                    ->label(__('messages.Verified'))
+                    ->label(__('user.fields.verified'))
                     ->default(true),
                 Forms\Components\Toggle::make('is_banned')
-                    ->label(__('messages.Banned'))
+                    ->label(__('user.fields.banned'))
                     ->default(false),
                 Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label(__('messages.Email Verified At')),
+                    ->label(__('user.fields.email_verified_at')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label(__('messages.Password'))
+                    ->label(__('user.fields.password'))
                     ->revealable()
                     ->autocomplete('new-password'),
                 Forms\Components\TextInput::make('password_confirmation')
@@ -94,7 +99,7 @@ class UserResource extends Resource
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label(__('messages.Confirm Password'))
+                    ->label(__('user.fields.password_confirmation'))
                     ->revealable()
                     ->autocomplete('new-password'),
             ]);
@@ -106,22 +111,22 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
-                    ->label(__('messages.Image'))
+                    ->label(__('user.fields.image'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('messages.Name'))
+                    ->label(__('user.fields.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label(__('messages.Email'))
+                    ->label(__('user.fields.email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label(__('messages.Phone'))
+                    ->label(__('user.fields.phone'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('role')
-                    ->label(__('messages.Role'))
+                    ->label(__('user.fields.role'))
                     ->colors([
                         'secondary' => 'buyer',
                         'warning' => 'sales',
@@ -130,21 +135,21 @@ class UserResource extends Resource
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label(__('messages.Verified'))
+                    ->label(__('user.fields.verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label(__('messages.Banned'))
+                    ->label(__('user.fields.banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->label(__('messages.Created At')),
+                    ->label(__('user.fields.created_at')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->label(__('messages.Updated At')),
+                    ->label(__('user.fields.updated_at')),
             ])
             ->filters([
                 //

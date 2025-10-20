@@ -19,17 +19,22 @@ class CompanyAccountResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('messages.User Management');
+        return __('company.navigation.group');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('messages.Company Accounts');
+        return __('company.navigation.label');
     }
 
     public static function getModelLabel(): string
     {
-        return __('messages.Company Accounts');
+        return __('company.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('company.model.plural');
     }
 
     public static function getEloquentQuery(): Builder
@@ -44,39 +49,39 @@ class CompanyAccountResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label(__('messages.Company Name')),
+                    ->label(__('company.fields.name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label(__('messages.Email Address')),
+                    ->label(__('company.fields.email')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label(__('messages.Phone Number')),
+                    ->label(__('company.fields.phone')),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')
                     ->directory('company-images')
-                    ->label(__('messages.Company Logo')),
+                    ->label(__('company.fields.image')),
                 Forms\Components\Hidden::make('role')
                     ->default('company'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label(__('messages.Email Verified At')),
+                    ->label(__('company.fields.email_verified_at')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label(__('messages.Password'))
+                    ->label(__('company.fields.password'))
                     ->revealable(),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label(__('messages.Confirm Password'))
+                    ->label(__('company.fields.password_confirmation'))
                     ->revealable(),
             ]);
     }
@@ -87,18 +92,18 @@ class CompanyAccountResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
-                    ->label(__('messages.Logo'))
+                    ->label(__('company.fields.image'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('messages.Company Name'))
+                    ->label(__('company.fields.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label(__('messages.Email'))
+                    ->label(__('company.fields.email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
-                    ->label(__('messages.Phone'))
+                    ->label(__('company.fields.phone'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('role')
@@ -111,15 +116,15 @@ class CompanyAccountResource extends Resource
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label(__('messages.Verified'))
+                    ->label(__('company.fields.verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label(__('messages.Banned'))
+                    ->label(__('company.fields.banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label(__('messages.Created At'))
+                    ->label(__('company.fields.created_at'))
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
