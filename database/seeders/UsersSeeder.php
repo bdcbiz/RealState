@@ -12,7 +12,7 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
+        $users = [
             [
                 'id' => 1,
                 'name' => 'Admin User',
@@ -97,6 +97,13 @@ class UsersSeeder extends Seeder
                 'created_at' => '2025-10-20 03:52:22',
                 'updated_at' => '2025-10-20 03:52:22',
             ]
-        ]);
+        ];
+
+        foreach ($users as $user) {
+            DB::table('users')->updateOrInsert(
+                ['id' => $user['id']],
+                $user
+            );
+        }
     }
 }

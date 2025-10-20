@@ -12,9 +12,9 @@ class CompaniesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('companies')->insert([
+        DB::table('companies')->updateOrInsert(
+            ['id' => 1],
             [
-                'id' => 1,
                 'name' => 'BDC Real Estate',
                 'name_ar' => 'بي دي سي العقارية',
                 'name_en' => 'BDC Real Estate',
@@ -28,6 +28,6 @@ class CompaniesSeeder extends Seeder
                 'created_at' => '2025-10-20 03:52:21',
                 'updated_at' => '2025-10-20 03:52:21',
             ]
-        ]);
+        );
     }
 }
