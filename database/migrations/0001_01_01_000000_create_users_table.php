@@ -15,9 +15,20 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('image')->nullable();
+            $table->string('role')->default('user'); // admin, buyer, seller, user
+            $table->unsignedBigInteger('company_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('is_banned')->default(false);
+            $table->string('verification_token', 64)->nullable();
+            $table->timestamp('verification_token_expires_at')->nullable();
+            $table->string('reset_token', 64)->nullable();
+            $table->timestamp('reset_token_expires_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('fcm_token')->nullable(); // Firebase Cloud Messaging token
             $table->timestamps();
         });
 
@@ -42,8 +53,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };

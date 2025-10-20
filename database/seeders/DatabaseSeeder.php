@@ -4,164 +4,73 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Company;
-use App\Models\Compound;
-use App\Models\Unit;
-use App\Models\Sale;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Clean data and fix datetime formats
-     */
-    private function cleanData(array $data, string $table, int $index = 0): array
-    {
-        $columns = Schema::getColumnListing($table);
-        $cleaned = [];
-        
-        foreach ($data as $key => $value) {
-            if (in_array($key, $columns)) {
-                // Fix datetime format
-                if ($value && in_array($key, ['created_at', 'updated_at', 'deleted_at', 'email_verified_at', 'start_date', 'end_date'])) {
-                    try {
-                        $cleaned[$key] = Carbon::parse($value)->format('Y-m-d H:i:s');
-                    } catch (\Exception $e) {
-                        $cleaned[$key] = $value;
-                    }
-                } else {
-                    // Convert arrays to JSON for JSON columns
-                    if (is_array($value)) {
-                        $cleaned[$key] = json_encode($value);
-                    } else {
-                        $cleaned[$key] = $value;
-                    }
-                }
-            }
-        }
-
-        // Map field names for compounds (project -> name)
-        if ($table === 'compounds' && isset($cleaned['project']) && !isset($cleaned['name'])) {
-            $cleaned['name'] = $cleaned['project'];
-        }
-
-        // Handle units with null/empty names
-        if ($table === 'units' && (empty($cleaned['unit_name']) || $cleaned['unit_name'] === null)) {
-            $cleaned['unit_name'] = 'Unit-' . ($cleaned['id'] ?? $index);
-        }
-        
-        // Fix empty or duplicate emails for companies
-        if ($table === 'companies') {
-            if (empty($cleaned['email']) || $cleaned['email'] === '') {
-                $cleanedName = Str::slug($cleaned['name'] ?? 'company');
-                $cleaned['email'] = $cleanedName . '_' . $cleaned['id'] . '@company.local';
-            }
-            // Add default password if missing
-            if (!isset($cleaned['password'])) {
-                $cleaned['password'] = Hash::make('password123');
-            }
-        }
-
-        // Fix empty passwords for users
-        if ($table === 'users') {
-            if (!isset($cleaned['password']) || empty($cleaned['password'])) {
-                $cleaned['password'] = Hash::make('password123');
-            }
-        }
-
-        return $cleaned;
-    }
-
-    /**
-     * Seed the application's database with complete data.
+     * Seed the application's database.
      */
     public function run(): void
     {
-        // Disable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        // Create Admin User
+        User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@realestate.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+            'is_verified' => true,
+            'email_verified_at' => now(),
+        ]);
 
-        // Clear existing data
-        $this->command->info('Clearing existing data...');
-        DB::table('sales')->truncate();
-        DB::table('units')->truncate();
-        DB::table('compounds')->truncate();
-        DB::table('companies')->truncate();
-        DB::table('users')->truncate();
+        // Create Test Company
+        $company = Company::create([
+            'name' => 'BDC Real Estate',
+            'name_ar' => 'بي دي سي العقارية',
+            'name_en' => 'BDC Real Estate',
+            'email' => 'company@bdcbiz.com',
+            'password' => Hash::make('password'),
+            'number_of_compounds' => 0,
+            'number_of_available_units' => 0,
+        ]);
 
-        // Load data from JSON files
-        $this->command->info('Loading data from JSON files...');
+        // Create Company Admin User
+        User::create([
+            'name' => 'Company Admin',
+            'email' => 'company-admin@bdcbiz.com',
+            'password' => Hash::make('password'),
+            'role' => 'seller',
+            'company_id' => $company->id,
+            'is_verified' => true,
+            'email_verified_at' => now(),
+        ]);
 
-        $dataPath = database_path('data');
-        $companiesData = json_decode(file_get_contents($dataPath . '/companies_data.json'), true);
-        $compoundsData = json_decode(file_get_contents($dataPath . '/compounds_data.json'), true);
-        $unitsData = json_decode(file_get_contents($dataPath . '/units_data.json'), true);
-        $salesData = json_decode(file_get_contents($dataPath . '/sales_data.json'), true);
-        $usersData = json_decode(file_get_contents($dataPath . '/users_data.json'), true);
+        // Create Test Buyer
+        User::create([
+            'name' => 'Test Buyer',
+            'email' => 'buyer@test.com',
+            'password' => Hash::make('password'),
+            'role' => 'buyer',
+            'is_verified' => true,
+            'email_verified_at' => now(),
+        ]);
 
-        // Seed Companies
-        $this->command->info('Seeding companies...');
-        foreach ($companiesData as $index => $company) {
-            $cleanCompany = $this->cleanData($company, 'companies', $index);
-            DB::table('companies')->insert($cleanCompany);
-        }
-        $this->command->info('✓ Seeded ' . count($companiesData) . ' companies');
+        // Create Test Seller
+        User::create([
+            'name' => 'Test Seller',
+            'email' => 'seller@test.com',
+            'password' => Hash::make('password'),
+            'role' => 'seller',
+            'company_id' => $company->id,
+            'is_verified' => true,
+            'email_verified_at' => now(),
+        ]);
 
-        // Seed Compounds
-        $this->command->info('Seeding compounds...');
-        foreach ($compoundsData as $index => $compound) {
-            $cleanCompound = $this->cleanData($compound, 'compounds', $index);
-            DB::table('compounds')->insert($cleanCompound);
-        }
-        $this->command->info('✓ Seeded ' . count($compoundsData) . ' compounds');
-
-        // Seed Units (in chunks)
-        $this->command->info('Seeding units...');
-        $unitsChunks = array_chunk($unitsData, 500);
-        $processed = 0;
-        foreach ($unitsChunks as $chunk) {
-            $cleanUnits = [];
-            foreach ($chunk as $index => $unit) {
-                $cleanUnits[] = $this->cleanData($unit, 'units', $index);
-            }
-            DB::table('units')->insert($cleanUnits);
-            $processed += count($chunk);
-            $this->command->info('  Processed ' . $processed . ' units...');
-        }
-        $this->command->info('✓ Seeded ' . count($unitsData) . ' units');
-
-        // Seed Sales
-        $this->command->info('Seeding sales...');
-        foreach ($salesData as $index => $sale) {
-            $cleanSale = $this->cleanData($sale, 'sales', $index);
-            DB::table('sales')->insert($cleanSale);
-        }
-        $this->command->info('✓ Seeded ' . count($salesData) . ' sales');
-
-        // Seed Users
-        $this->command->info('Seeding users...');
-        foreach ($usersData as $index => $user) {
-            $cleanUser = $this->cleanData($user, 'users', $index);
-            DB::table('users')->insert($cleanUser);
-        }
-        $this->command->info('✓ Seeded ' . count($usersData) . ' users');
-
-        // Re-enable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        $this->command->info('');
-        $this->command->info('====================================');
-        $this->command->info('Database seeding completed successfully!');
-        $this->command->info('====================================');
-        $this->command->info('Total records seeded:');
-        $this->command->info('- Companies: ' . count($companiesData));
-        $this->command->info('- Compounds: ' . count($compoundsData));
-        $this->command->info('- Units: ' . count($unitsData));
-        $this->command->info('- Sales: ' . count($salesData));
-        $this->command->info('- Users: ' . count($usersData));
-        $this->command->info('====================================');
+        $this->command->info('Database seeded successfully!');
+        $this->command->info('Admin: admin@realestate.com / password');
+        $this->command->info('Company Admin: company-admin@bdcbiz.com / password');
+        $this->command->info('Buyer: buyer@test.com / password');
+        $this->command->info('Seller: seller@test.com / password');
     }
 }
