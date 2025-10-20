@@ -19,7 +19,25 @@ class CompoundResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationGroup = 'Real Estate Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('compounds.navigation.group');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('compounds.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('compounds.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('compounds.model.plural');
+    }
 
     public static function form(Form $form): Form
     {
@@ -28,17 +46,17 @@ class CompoundResource extends Resource
                 Forms\Components\TextInput::make('project')
                     ->maxLength(255)
                     ->default(null)
-                    ->label('Project Name'),
+                    ->label(__('compounds.fields.project')),
                 Forms\Components\TextInput::make('location')
                     ->maxLength(255)
-                    ->label('Location Name'),
+                    ->label(__('compounds.fields.location')),
                 Forms\Components\TextInput::make('location_url')
                     ->url()
                     ->maxLength(500)
-                    ->label('Location URL (Google Maps)')
-                    ->placeholder('https://maps.google.com/...'),
+                    ->label(__('compounds.fields.location_url'))
+                    ->placeholder(__('compounds.helpers.location_url')),
                 Forms\Components\FileUpload::make('images')
-                    ->label('Compound Images')
+                    ->label(__('compounds.fields.images'))
                     ->multiple()
                     ->reorderable()
                     ->disk('apache_public')
@@ -49,42 +67,52 @@ class CompoundResource extends Resource
                     ->maxFiles(10)
                     ->imageEditor()
                     ->columnSpanFull()
-                    ->helperText('Upload multiple images for this compound (max 10 images, up to 10MB each)'),
+                    ->helperText(__('compounds.helpers.images')),
                 Forms\Components\TextInput::make('built_up_area')
                     ->numeric()
-                    ->default(null),
+                    ->default(null)
+                    ->label(__('compounds.fields.built_up_area')),
                 Forms\Components\TextInput::make('how_many_floors')
                     ->numeric()
-                    ->default(null),
-                Forms\Components\DatePicker::make('planned_delivery_date'),
-                Forms\Components\DatePicker::make('actual_delivery_date'),
+                    ->default(null)
+                    ->label(__('compounds.fields.how_many_floors')),
+                Forms\Components\DatePicker::make('planned_delivery_date')
+                    ->label(__('compounds.fields.planned_delivery_date')),
+                Forms\Components\DatePicker::make('actual_delivery_date')
+                    ->label(__('compounds.fields.actual_delivery_date')),
                 Forms\Components\TextInput::make('completion_progress')
                     ->numeric()
-                    ->default(null),
+                    ->default(null)
+                    ->label(__('compounds.fields.completion_progress')),
                 Forms\Components\TextInput::make('land_area')
                     ->numeric()
-                    ->default(null),
+                    ->default(null)
+                    ->label(__('compounds.fields.land_area')),
                 Forms\Components\TextInput::make('built_area')
                     ->numeric()
-                    ->default(null),
+                    ->default(null)
+                    ->label(__('compounds.fields.built_area')),
                 Forms\Components\Textarea::make('finish_specs')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label(__('compounds.fields.finish_specs')),
                 Forms\Components\Toggle::make('club')
-                    ->required(),
+                    ->required()
+                    ->label(__('compounds.fields.club')),
                 Forms\Components\Select::make('status')
                     ->options([
-                        'inhabited' => 'Inhabited',
-                        'in_progress' => 'In Progress',
-                        'delivered' => 'Delivered',
+                        'inhabited' => __('compounds.status.inhabited'),
+                        'in_progress' => __('compounds.status.in_progress'),
+                        'delivered' => __('compounds.status.delivered'),
                     ])
                     ->default('in_progress')
-                    ->required(),
+                    ->required()
+                    ->label(__('compounds.fields.status')),
                 Forms\Components\DatePicker::make('delivered_at')
-                    ->label('Delivered At'),
+                    ->label(__('compounds.fields.delivered_at')),
                 Forms\Components\TextInput::make('total_units')
                     ->numeric()
                     ->default(0)
-                    ->label('Total Units'),
+                    ->label(__('compounds.fields.total_units')),
             ]);
     }
 
@@ -93,74 +121,85 @@ class CompoundResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('images')
-                    ->label('Images')
+                    ->label(__('compounds.fields.images'))
                     ->circular()
                     ->stacked()
                     ->limit(3)
                     ->limitedRemainingText()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('project')
-                    ->label('Project Name')
+                    ->label(__('compounds.fields.project'))
                     ->searchable()
                     ->sortable()
                     ->wrap(),
                 Tables\Columns\TextColumn::make('units_count')
                     ->counts('units')
-                    ->label('Total Units')
+                    ->label(__('compounds.fields.total_units'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('built_up_area')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.built_up_area')),
                 Tables\Columns\TextColumn::make('how_many_floors')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.how_many_floors')),
                 Tables\Columns\TextColumn::make('planned_delivery_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.planned_delivery_date')),
                 Tables\Columns\TextColumn::make('actual_delivery_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.actual_delivery_date')),
                 Tables\Columns\TextColumn::make('completion_progress')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.completion_progress')),
                 Tables\Columns\TextColumn::make('land_area')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.land_area')),
                 Tables\Columns\TextColumn::make('built_area')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.built_area')),
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'in_progress',
                         'success' => 'delivered',
                         'primary' => 'inhabited',
                     ])
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('compounds.fields.status')),
                 Tables\Columns\TextColumn::make('delivered_at')
-                    ->label('Delivered At')
+                    ->label(__('compounds.fields.delivered_at'))
                     ->date()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('total_units')
-                    ->label('Total Units')
+                    ->label(__('compounds.fields.total_units'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('compounds.fields.created_at')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('compounds.fields.updated_at')),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('compounds.fields.deleted_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('location')
-                    ->label('Location')
+                    ->label(__('compounds.filters.location'))
                     ->options(function () {
                         return \App\Models\Compound::whereNotNull('location')
                             ->distinct()
@@ -168,16 +207,8 @@ class CompoundResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('land_area')
-                    ->label('Land Area')
-                    ->options([
-                        '0-50' => '0 - 50 sqm',
-                        '50-100' => '50 - 100 sqm',
-                        '100-200' => '100 - 200 sqm',
-                        '200-300' => '200 - 300 sqm',
-                        '300-500' => '300 - 500 sqm',
-                        '500-1000' => '500 - 1000 sqm',
-                        '1000+' => 'Above 1000 sqm',
-                    ])
+                    ->label(__('compounds.filters.land_area'))
+                    ->options(__('compounds.filters.land_area_ranges'))
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when($data['value'], function ($q, $value) {
                             if ($value === '1000+') {
@@ -190,7 +221,7 @@ class CompoundResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('planned_delivery_date')
-                    ->label('Delivery Date')
+                    ->label(__('compounds.filters.delivery_date'))
                     ->options(function () {
                         return \App\Models\Compound::whereNotNull('planned_delivery_date')
                             ->distinct()
@@ -206,18 +237,12 @@ class CompoundResource extends Resource
 
                 // Unit-based filters
                 Tables\Filters\Filter::make('has_available_units')
-                    ->label('Has Available Units')
+                    ->label(__('compounds.filters.has_available_units'))
                     ->query(fn (Builder $query): Builder => $query->whereHas('units', fn ($q) => $q->where('available', true))),
 
                 Tables\Filters\SelectFilter::make('price')
-                    ->label('Price Range')
-                    ->options([
-                        '0-1000000' => 'Under 1M',
-                        '1000000-3000000' => '1M - 3M',
-                        '3000000-5000000' => '3M - 5M',
-                        '5000000-10000000' => '5M - 10M',
-                        '10000000+' => 'Above 10M',
-                    ])
+                    ->label(__('compounds.filters.price'))
+                    ->options(__('compounds.filters.price_ranges'))
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when($data['value'], function ($q, $value) {
                             if ($value === '10000000+') {
@@ -234,16 +259,8 @@ class CompoundResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('unit_area')
-                    ->label('Unit Area')
-                    ->options([
-                        '0-50' => '0 - 50 sqm',
-                        '50-100' => '50 - 100 sqm',
-                        '100-150' => '100 - 150 sqm',
-                        '150-200' => '150 - 200 sqm',
-                        '200-300' => '200 - 300 sqm',
-                        '300-500' => '300 - 500 sqm',
-                        '500+' => 'Above 500 sqm',
-                    ])
+                    ->label(__('compounds.filters.unit_area'))
+                    ->options(__('compounds.filters.unit_area_ranges'))
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when($data['value'], function ($q, $value) {
                             if ($value === '500+') {
@@ -260,16 +277,8 @@ class CompoundResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('unit_type')
-                    ->label('Unit Type')
-                    ->options([
-                        'Apartment' => 'Apartment',
-                        'Villa' => 'Villa',
-                        'Town House' => 'Town House',
-                        'Chalet' => 'Chalet',
-                        'Cabins' => 'Cabins',
-                        'Offices' => 'Offices',
-                        'Twin House' => 'Twin House',
-                    ])
+                    ->label(__('compounds.filters.unit_type'))
+                    ->options(__('compounds.filters.unit_types'))
                     ->query(fn (Builder $query, array $data): Builder =>
                         $query->when($data['value'], fn ($q, $value) =>
                             $q->whereHas('units', fn ($unitQuery) => $unitQuery->where('unit_type', $value))

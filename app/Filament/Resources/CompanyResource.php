@@ -19,9 +19,25 @@ class CompanyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationGroup = 'Real Estate Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('companies.navigation.group');
+    }
 
-    protected static ?string $navigationLabel = 'Companies';
+    public static function getNavigationLabel(): string
+    {
+        return __('companies.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('companies.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('companies.model.plural');
+    }
 
     public static function form(Form $form): Form
     {
@@ -30,29 +46,29 @@ class CompanyResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Company Name'),
+                    ->label(__('companies.fields.name')),
                 Forms\Components\FileUpload::make('logo')
                     ->image()
                     ->disk('public')
                     ->directory('company-logos')
-                    ->label('Company Logo')
+                    ->label(__('companies.fields.logo'))
                     ->imageEditor(),
                 Forms\Components\TextInput::make('number_of_compounds')
                     ->numeric()
                     ->default(0)
-                    ->label('Number of Compounds'),
+                    ->label(__('companies.fields.number_of_compounds')),
                 Forms\Components\TextInput::make('number_of_available_units')
                     ->numeric()
                     ->default(0)
-                    ->label('Number of Available Units'),
+                    ->label(__('companies.fields.number_of_available_units')),
 
-                Forms\Components\Section::make('Sales Team')
+                Forms\Components\Section::make(__('companies.sections.sales_team'))
                     ->schema([
                         Forms\Components\Placeholder::make('sales_team_info')
                             ->label('')
                             ->content(function ($record) {
                                 if (!$record) {
-                                    return 'Save the company first to see sales team members.';
+                                    return __('companies.messages.save_first_sales');
                                 }
 
                                 $salesUsers = \App\Models\User::where('company_id', $record->id)
@@ -60,7 +76,7 @@ class CompanyResource extends Resource
                                     ->get();
 
                                 if ($salesUsers->isEmpty()) {
-                                    return 'No sales team members assigned yet.';
+                                    return __('companies.messages.no_sales_members');
                                 }
 
                                 $html = '<div class="space-y-2">';
@@ -70,7 +86,7 @@ class CompanyResource extends Resource
                                     $html .= '<p class="font-semibold text-gray-900 dark:text-white">' . e($user->name) . '</p>';
                                     $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">' . e($user->email) . '</p>';
                                     if ($user->phone) {
-                                        $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">Phone: ' . e($user->phone) . '</p>';
+                                        $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">' . __('companies.messages.phone') . ': ' . e($user->phone) . '</p>';
                                     }
                                     $html .= '</div>';
                                     $html .= '</div>';
@@ -83,19 +99,19 @@ class CompanyResource extends Resource
                     ->collapsible()
                     ->visible(fn ($record) => $record !== null),
 
-                Forms\Components\Section::make('Compounds')
+                Forms\Components\Section::make(__('companies.sections.compounds'))
                     ->schema([
                         Forms\Components\Placeholder::make('compounds_info')
                             ->label('')
                             ->content(function ($record) {
                                 if (!$record) {
-                                    return 'Save the company first to see compounds.';
+                                    return __('companies.messages.save_first_compounds');
                                 }
 
                                 $compounds = \App\Models\Compound::where('company_id', $record->id)->get();
 
                                 if ($compounds->isEmpty()) {
-                                    return 'No compounds assigned yet.';
+                                    return __('companies.messages.no_compounds');
                                 }
 
                                 $html = '<div class="space-y-2">';
@@ -104,11 +120,11 @@ class CompanyResource extends Resource
                                     $html .= '<div class="flex-1">';
                                     $html .= '<p class="font-semibold text-gray-900 dark:text-white">' . e($compound->project) . '</p>';
                                     if ($compound->location) {
-                                        $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">Location: ' . e($compound->location) . '</p>';
+                                        $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">' . __('companies.messages.location') . ': ' . e($compound->location) . '</p>';
                                     }
                                     $html .= '</div>';
                                     $html .= '<div class="text-right">';
-                                    $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">Units: ' . $compound->units()->count() . '</p>';
+                                    $html .= '<p class="text-sm text-gray-600 dark:text-gray-400">' . __('companies.messages.units') . ': ' . $compound->units()->count() . '</p>';
                                     $html .= '</div>';
                                     $html .= '</div>';
                                 }
@@ -128,50 +144,50 @@ class CompanyResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('logo')
                     ->disk('public')
-                    ->label('Logo')
+                    ->label(__('companies.fields.logo'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->label('Company Name'),
+                    ->label(__('companies.fields.name')),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts([
                         'users' => fn ($query) => $query->where('role', 'sales')
                     ])
-                    ->label('Sales Team')
+                    ->label(__('companies.fields.sales_team'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('number_of_compounds')
                     ->numeric()
                     ->sortable()
-                    ->label('Compounds'),
+                    ->label(__('companies.fields.number_of_compounds')),
                 Tables\Columns\TextColumn::make('number_of_available_units')
                     ->numeric()
                     ->sortable()
-                    ->label('Available Units'),
+                    ->label(__('companies.fields.number_of_available_units')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Created At')
+                    ->label(__('companies.fields.created_at'))
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Updated At')
+                    ->label(__('companies.fields.updated_at'))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('has_sales_team')
-                    ->label('Has Sales Team')
+                    ->label(__('companies.filters.has_sales_team'))
                     ->query(fn (Builder $query): Builder =>
                         $query->whereHas('users', fn ($q) => $q->where('role', 'sales'))
                     ),
                 Tables\Filters\Filter::make('has_compounds')
-                    ->label('Has Compounds')
+                    ->label(__('companies.filters.has_compounds'))
                     ->query(fn (Builder $query): Builder =>
                         $query->where('number_of_compounds', '>', 0)
                     ),
                 Tables\Filters\SelectFilter::make('compounds_range')
-                    ->label('Compounds Range')
+                    ->label(__('companies.filters.compounds_range'))
                     ->options([
                         '1-5' => '1 - 5',
                         '6-10' => '6 - 10',
