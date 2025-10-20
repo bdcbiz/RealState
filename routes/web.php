@@ -29,3 +29,22 @@ Route::prefix('import')->name('import.')->group(function () {
     Route::get('/merged-availability', [ExportController::class, 'showImportForm'])->name('merged-availability.form');
     Route::post('/merged-availability', [ExportController::class, 'importMergedAvailability'])->name('merged-availability');
 });
+
+Route::get('/test-auth', function () {
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(['authenticated' => false]);
+    }
+    
+    $panel = Filament\Facades\Filament::getPanel('admin');
+    return response()->json([
+        'authenticated' => true,
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role
+        ],
+        'canAccessPanel' => $user->canAccessPanel($panel)
+    ]);
+});
