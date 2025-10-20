@@ -46,13 +46,22 @@ class SalesUserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Sales Person Information')->schema([
-                Forms\Components\TextInput::make('name')->disabled(),
-                Forms\Components\TextInput::make('email')->disabled(),
-                Forms\Components\TextInput::make('phone')->disabled(),
+            Forms\Components\Section::make(__('admin.sales_team.sections.information'))->schema([
+                Forms\Components\TextInput::make('name')
+                    ->label(__('admin.sales_team.fields.name'))
+                    ->disabled(),
+                Forms\Components\TextInput::make('email')
+                    ->label(__('admin.sales_team.fields.email'))
+                    ->disabled(),
+                Forms\Components\TextInput::make('phone')
+                    ->label(__('admin.sales_team.fields.phone'))
+                    ->disabled(),
                 Forms\Components\TextInput::make('company.name')
-                    ->label('Company')->disabled(),
-                Forms\Components\Toggle::make('is_verified')->disabled(),
+                    ->label(__('admin.sales_team.fields.company'))
+                    ->disabled(),
+                Forms\Components\Toggle::make('is_verified')
+                    ->label(__('admin.sales_team.fields.verified'))
+                    ->disabled(),
             ])->columns(2),
         ]);
     }
@@ -62,12 +71,28 @@ class SalesUserResource extends Resource
         return $table->columns([
             Tables\Columns\ImageColumn::make('image')->circular(),
             Tables\Columns\TextColumn::make('company.name')
-                ->label('Company')->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('name')->searchable()->sortable()->weight('bold'),
-            Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
-            Tables\Columns\TextColumn::make('phone')->searchable(),
-            Tables\Columns\IconColumn::make('is_verified')->boolean()->label('Verified'),
-            Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()
+                ->label(__('admin.sales_team.fields.company'))
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('name')
+                ->label(__('admin.sales_team.fields.name'))
+                ->searchable()
+                ->sortable()
+                ->weight('bold'),
+            Tables\Columns\TextColumn::make('email')
+                ->label(__('admin.sales_team.fields.email'))
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('phone')
+                ->label(__('admin.sales_team.fields.phone'))
+                ->searchable(),
+            Tables\Columns\IconColumn::make('is_verified')
+                ->boolean()
+                ->label(__('admin.sales_team.fields.verified')),
+            Tables\Columns\TextColumn::make('created_at')
+                ->label(__('admin.sales_team.fields.created_at'))
+                ->dateTime()
+                ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true),
         ])->filters([
             Tables\Filters\SelectFilter::make('company')

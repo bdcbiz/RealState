@@ -49,34 +49,34 @@ class SuperAdminResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Full Name'),
+                    ->label(__('admin.super_admins.fields.name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label('Email Address'),
+                    ->label(__('admin.super_admins.fields.email')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label('Phone Number'),
+                    ->label(__('admin.super_admins.fields.phone')),
                 Forms\Components\Hidden::make('role')
                     ->default('admin'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label('Email Verified At'),
+                    ->label(__('admin.super_admins.fields.email_verified_at')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label('Password')
+                    ->label(__('admin.super_admins.fields.password'))
                     ->revealable(),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Confirm Password')
+                    ->label(__('admin.super_admins.fields.password_confirmation'))
                     ->revealable(),
             ]);
     }
@@ -103,10 +103,10 @@ class SuperAdminResource extends Resource
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('admin.super_admins.fields.is_verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('admin.super_admins.fields.is_banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
