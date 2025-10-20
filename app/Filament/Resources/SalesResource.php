@@ -19,11 +19,25 @@ class SalesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'User Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sales_users.navigation.group');
+    }
 
-    protected static ?string $navigationLabel = 'Sales';
+    public static function getNavigationLabel(): string
+    {
+        return __('sales_users.navigation.label');
+    }
 
-    protected static ?string $modelLabel = 'Sales User';
+    public static function getModelLabel(): string
+    {
+        return __('sales_users.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('sales_users.model.plural');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -37,19 +51,19 @@ class SalesResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Full Name'),
+                    ->label(__('sales_users.fields.name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label('Email Address'),
+                    ->label(__('sales_users.fields.email')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label('Phone Number'),
+                    ->label(__('sales_users.fields.phone')),
                 Forms\Components\Select::make('company_id')
-                    ->label('Company')
+                    ->label(__('sales_users.fields.company'))
                     ->relationship('company', 'name')
                     ->searchable()
                     ->preload()
@@ -58,19 +72,19 @@ class SalesResource extends Resource
                     ->image()
                     ->disk('public')
                     ->directory('user-images')
-                    ->label('Profile Image'),
+                    ->label(__('sales_users.fields.image')),
                 Forms\Components\Toggle::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('sales_users.fields.verified'))
                     ->default(true),
                 Forms\Components\Toggle::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('sales_users.fields.banned'))
                     ->default(false),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label('Password')
+                    ->label(__('sales_users.fields.password'))
                     ->revealable()
                     ->autocomplete('new-password'),
                 Forms\Components\TextInput::make('password_confirmation')
@@ -78,7 +92,7 @@ class SalesResource extends Resource
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Confirm Password')
+                    ->label(__('sales_users.fields.password_confirmation'))
                     ->revealable()
                     ->autocomplete('new-password'),
                 Forms\Components\Hidden::make('role')
@@ -92,45 +106,45 @@ class SalesResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
-                    ->label('Image')
+                    ->label(__('sales_users.fields.image'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->label('Name'),
+                    ->label(__('sales_users.fields.name')),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->sortable()
-                    ->label('Email'),
+                    ->label(__('sales_users.fields.email')),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable()
                     ->sortable()
-                    ->label('Phone'),
+                    ->label(__('sales_users.fields.phone')),
                 Tables\Columns\TextColumn::make('company.name')
-                    ->label('Company')
+                    ->label(__('sales_users.fields.company'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('sales_users.fields.verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('sales_users.fields.banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Created At'),
+                    ->label(__('sales_users.fields.created_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('company_id')
-                    ->label('Company')
+                    ->label(__('sales_users.filters.company'))
                     ->relationship('company', 'name')
                     ->searchable()
                     ->preload(),
                 Tables\Filters\TernaryFilter::make('is_verified')
-                    ->label('Verified'),
+                    ->label(__('sales_users.filters.verified')),
                 Tables\Filters\TernaryFilter::make('is_banned')
-                    ->label('Banned'),
+                    ->label(__('sales_users.filters.banned')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

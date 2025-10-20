@@ -19,9 +19,25 @@ class MergedAvailabilityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-table-cells';
 
-    protected static ?string $navigationLabel = 'Merged Availability';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('merged_availability.navigation.group');
+    }
 
-    protected static ?string $navigationGroup = 'Reports';
+    public static function getNavigationLabel(): string
+    {
+        return __('merged_availability.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('merged_availability.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('merged_availability.model.plural');
+    }
 
     public static function canCreate(): bool
     {
@@ -104,107 +120,110 @@ class MergedAvailabilityResource extends Resource
                         'primary' => 'units',
                     ])
                     ->sortable()
-                    ->label('Source'),
+                    ->label(__('merged_availability.fields.source')),
                 Tables\Columns\TextColumn::make('project')
                     ->searchable()
                     ->sortable()
-                    ->label('Project'),
+                    ->label(__('merged_availability.fields.project')),
 
                 // Sales Availability columns
                 Tables\Columns\TextColumn::make('stage')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.stage')),
                 Tables\Columns\TextColumn::make('category')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.category')),
                 Tables\Columns\TextColumn::make('unit_type')
                     ->searchable()
                     ->sortable()
-                    ->label('Unit Type'),
+                    ->label(__('merged_availability.fields.unit_type')),
                 Tables\Columns\TextColumn::make('unit_code')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.unit_code')),
                 Tables\Columns\TextColumn::make('grand_total')
-                    ->label('Grand Total')
+                    ->label(__('merged_availability.fields.grand_total'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('total_finishing_price')
-                    ->label('Total Finishing Price')
+                    ->label(__('merged_availability.fields.total_finishing_price'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('unit_total_with_finishing_price')
-                    ->label('Unit Total with Finishing')
+                    ->label(__('merged_availability.fields.unit_total_with_finishing_price'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('planned_delivery_date')
-                    ->label('Planned Delivery')
+                    ->label(__('merged_availability.fields.planned_delivery_date'))
                     ->date()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('actual_delivery_date')
-                    ->label('Actual Delivery')
+                    ->label(__('merged_availability.fields.actual_delivery_date'))
                     ->date()
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('completion_progress')
-                    ->label('Completion %')
+                    ->label(__('merged_availability.fields.completion_progress'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('land_area')
-                    ->label('Land Area')
+                    ->label(__('merged_availability.fields.land_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('built_area')
-                    ->label('Built Area')
+                    ->label(__('merged_availability.fields.built_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('basement_area')
-                    ->label('Basement Area')
+                    ->label(__('merged_availability.fields.basement_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('uncovered_basement_area')
-                    ->label('Uncovered Basement')
+                    ->label(__('merged_availability.fields.uncovered_basement_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('penthouse_area')
-                    ->label('Penthouse Area')
+                    ->label(__('merged_availability.fields.penthouse_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('semi_covered_roof_area')
-                    ->label('Semi Covered Roof')
+                    ->label(__('merged_availability.fields.semi_covered_roof_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('garage_area')
-                    ->label('Garage Area')
+                    ->label(__('merged_availability.fields.garage_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('pergola_area')
-                    ->label('Pergola Area')
+                    ->label(__('merged_availability.fields.pergola_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('storage_area')
-                    ->label('Storage Area')
+                    ->label(__('merged_availability.fields.storage_area'))
                     ->suffix(' m²')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('finishing_specs')
-                    ->label('Finishing Specs')
+                    ->label(__('merged_availability.fields.finishing_specs'))
                     ->sortable()
                     ->toggleable()
                     ->limit(50),
                 Tables\Columns\TextColumn::make('club')
-                    ->label('Club')
+                    ->label(__('merged_availability.fields.club'))
                     ->sortable()
                     ->toggleable(),
 
@@ -212,52 +231,61 @@ class MergedAvailabilityResource extends Resource
                 Tables\Columns\TextColumn::make('unit_name')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.unit_name')),
                 Tables\Columns\TextColumn::make('usage_type')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.usage_type')),
                 Tables\Columns\TextColumn::make('floor')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.floor')),
                 Tables\Columns\TextColumn::make('no_of_bedrooms')
-                    ->label('Bedrooms')
+                    ->label(__('merged_availability.fields.no_of_bedrooms'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('nominal_price')
-                    ->label('Nominal Price')
+                    ->label(__('merged_availability.fields.nominal_price'))
                     ->sortable()
                     ->toggleable(),
 
                 // Common columns
                 Tables\Columns\TextColumn::make('bua')
-                    ->label('BUA')
+                    ->label(__('merged_availability.fields.bua'))
                     ->suffix(' m²')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('garden_area')
                     ->suffix(' m²')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.garden_area')),
                 Tables\Columns\TextColumn::make('roof_area')
                     ->suffix(' m²')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.roof_area')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.created_at')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->label(__('merged_availability.fields.updated_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('source')
+                    ->label(__('merged_availability.filters.source'))
                     ->options([
-                        'sales' => 'Sales Availability',
-                        'units' => 'Units Availability',
+                        'sales' => __('merged_availability.source_options.sales'),
+                        'units' => __('merged_availability.source_options.units'),
                     ]),
                 Tables\Filters\SelectFilter::make('project')
+                    ->label(__('merged_availability.filters.project'))
                     ->options(function () {
                         return DB::table(DB::raw('(
                             SELECT DISTINCT project FROM sales_availability WHERE project IS NOT NULL
@@ -273,13 +301,13 @@ class MergedAvailabilityResource extends Resource
             ])
             ->headerActions([
                 Action::make('importExcel')
-                    ->label('Import from Excel')
+                    ->label(__('merged_availability.actions.import_excel'))
                     ->icon('heroicon-o-arrow-up-tray')
                     ->color('primary')
                     ->url(fn (): string => route('import.merged-availability.form'))
                     ->openUrlInNewTab(),
                 Action::make('exportExcel')
-                    ->label('Export to Excel')
+                    ->label(__('merged_availability.actions.export_excel'))
                     ->icon('heroicon-o-table-cells')
                     ->color('success')
                     ->url(fn (): string => route('export.merged-availability'))

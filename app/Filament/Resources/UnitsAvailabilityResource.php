@@ -20,9 +20,25 @@ class UnitsAvailabilityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static ?string $navigationLabel = 'Units Availability';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('units_availability.navigation.group');
+    }
 
-    protected static ?string $navigationGroup = 'Reports';
+    public static function getNavigationLabel(): string
+    {
+        return __('units_availability.navigation.label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('units_availability.model.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('units_availability.model.plural');
+    }
 
     public static function form(Form $form): Form
     {
@@ -55,47 +71,57 @@ class UnitsAvailabilityResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('unit_name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('units_availability.fields.unit_name')),
                 Tables\Columns\TextColumn::make('project')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('units_availability.fields.project')),
                 Tables\Columns\TextColumn::make('usage_type')
                     ->searchable()
                     ->sortable()
-                    ->badge(),
+                    ->badge()
+                    ->label(__('units_availability.fields.usage_type')),
                 Tables\Columns\TextColumn::make('bua')
-                    ->label('BUA (Built-Up Area)')
+                    ->label(__('units_availability.fields.bua'))
                     ->suffix(' m²')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('garden_area')
                     ->suffix(' m²')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('units_availability.fields.garden_area')),
                 Tables\Columns\TextColumn::make('roof_area')
                     ->suffix(' m²')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('units_availability.fields.roof_area')),
                 Tables\Columns\TextColumn::make('floor')
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('units_availability.fields.floor')),
                 Tables\Columns\TextColumn::make('no__of_bedrooms')
-                    ->label('Bedrooms')
+                    ->label(__('units_availability.fields.no__of_bedrooms'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('nominal_price')
                     ->money('EGP')
-                    ->sortable(),
+                    ->sortable()
+                    ->label(__('units_availability.fields.nominal_price')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('units_availability.fields.created_at')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('units_availability.fields.updated_at')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('project')
                     ->searchable()
                     ->preload()
+                    ->label(__('units_availability.filters.project'))
                     ->options(fn () => UnitsAvailability::query()
                         ->distinct()
                         ->whereNotNull('project')
@@ -106,6 +132,7 @@ class UnitsAvailabilityResource extends Resource
                 Tables\Filters\SelectFilter::make('usage_type')
                     ->searchable()
                     ->preload()
+                    ->label(__('units_availability.filters.usage_type'))
                     ->options(fn () => UnitsAvailability::query()
                         ->distinct()
                         ->whereNotNull('usage_type')
@@ -125,7 +152,7 @@ class UnitsAvailabilityResource extends Resource
             ])
             ->headerActions([
                 Action::make('exportExcel')
-                    ->label('Export to Excel')
+                    ->label(__('units_availability.actions.export_excel'))
                     ->icon('heroicon-o-table-cells')
                     ->color('success')
                     ->url(fn (): string => route('export.units-availability'))
