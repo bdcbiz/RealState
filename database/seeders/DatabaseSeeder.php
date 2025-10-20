@@ -27,16 +27,31 @@ class DatabaseSeeder extends Seeder
         foreach ($data as $key => $value) {
             if (in_array($key, $columns)) {
                 // Fix datetime format
-                if ($value && in_array($key, ['created_at', 'updated_at', 'deleted_at', 'email_verified_at'])) {
+                if ($value && in_array($key, ['created_at', 'updated_at', 'deleted_at', 'email_verified_at', 'start_date', 'end_date'])) {
                     try {
                         $cleaned[$key] = Carbon::parse($value)->format('Y-m-d H:i:s');
                     } catch (\Exception $e) {
                         $cleaned[$key] = $value;
                     }
                 } else {
-                    $cleaned[$key] = $value;
+                    // Convert arrays to JSON for JSON columns
+                    if (is_array($value)) {
+                        $cleaned[$key] = json_encode($value);
+                    } else {
+                        $cleaned[$key] = $value;
+                    }
                 }
             }
+        }
+
+        // Map field names for compounds (project -> name)
+        if ($table === 'compounds' && isset($cleaned['project']) && !isset($cleaned['name'])) {
+            $cleaned['name'] = $cleaned['project'];
+        }
+
+        // Handle units with null/empty names
+        if ($table === 'units' && (empty($cleaned['unit_name']) || $cleaned['unit_name'] === null)) {
+            $cleaned['unit_name'] = 'Unit-' . ($cleaned['id'] ?? $index);
         }
         
         // Fix empty or duplicate emails for companies
@@ -50,7 +65,14 @@ class DatabaseSeeder extends Seeder
                 $cleaned['password'] = Hash::make('password123');
             }
         }
-        
+
+        // Fix empty passwords for users
+        if ($table === 'users') {
+            if (!isset($cleaned['password']) || empty($cleaned['password'])) {
+                $cleaned['password'] = Hash::make('password123');
+            }
+        }
+
         return $cleaned;
     }
 
