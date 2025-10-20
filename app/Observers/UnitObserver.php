@@ -55,6 +55,9 @@ class UnitObserver
         } catch (\Exception $e) {
             Log::error('Failed to send notification for new unit: ' . $e->getMessage());
         }
+
+        // Update company statistics
+        $this->updateCompanyStatistics($unit);
     }
 
     /**
@@ -202,6 +205,37 @@ class UnitObserver
             } catch (\Exception $e) {
                 Log::error('Failed to send notification for unit update: ' . $e->getMessage());
             }
+        }
+
+        // Update company statistics if is_sold status changed or compound changed
+        if ($unit->isDirty('is_sold') || $unit->isDirty('compound_id')) {
+            if ($unit->isDirty('compound_id')) {
+                // Update old compound's company
+                $oldCompound = \App\Models\Compound::find($unit->getOriginal('compound_id'));
+                if ($oldCompound && $oldCompound->company) {
+                    $oldCompound->company->updateStatistics();
+                }
+            }
+            // Update current compound's company
+            $this->updateCompanyStatistics($unit);
+        }
+    }
+
+    /**
+     * Handle the Unit "deleted" event.
+     */
+    public function deleted(Unit $unit)
+    {
+        $this->updateCompanyStatistics($unit);
+    }
+
+    /**
+     * Update the company statistics
+     */
+    protected function updateCompanyStatistics(Unit $unit)
+    {
+        if ($unit->compound && $unit->compound->company) {
+            $unit->compound->company->updateStatistics();
         }
     }
 }

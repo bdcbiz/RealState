@@ -57,5 +57,45 @@ class CompoundObserver
         } catch (\Exception $e) {
             Log::error('Failed to send notification for new compound: ' . $e->getMessage());
         }
+
+        // Update company statistics
+        $this->updateCompanyStatistics($compound);
+    }
+
+    /**
+     * Handle the Compound "updated" event.
+     */
+    public function updated(Compound $compound)
+    {
+        // Update company statistics if company changed
+        if ($compound->isDirty('company_id')) {
+            // Update old company
+            if ($compound->getOriginal('company_id')) {
+                $oldCompany = \App\Models\Company::find($compound->getOriginal('company_id'));
+                if ($oldCompany) {
+                    $oldCompany->updateStatistics();
+                }
+            }
+            // Update new company
+            $this->updateCompanyStatistics($compound);
+        }
+    }
+
+    /**
+     * Handle the Compound "deleted" event.
+     */
+    public function deleted(Compound $compound)
+    {
+        $this->updateCompanyStatistics($compound);
+    }
+
+    /**
+     * Update the company statistics
+     */
+    protected function updateCompanyStatistics(Compound $compound)
+    {
+        if ($compound->company) {
+            $compound->company->updateStatistics();
+        }
     }
 }

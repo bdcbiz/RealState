@@ -21,7 +21,7 @@ class CompanyResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('companies.navigation.group');
+        return 'إدارة العقارات';
     }
 
     public static function getNavigationLabel(): string
@@ -43,24 +43,64 @@ class CompanyResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255)
-                    ->label(__('companies.fields.name')),
-                Forms\Components\FileUpload::make('logo')
-                    ->image()
-                    ->disk('public')
-                    ->directory('company-logos')
-                    ->label(__('companies.fields.logo'))
-                    ->imageEditor(),
-                Forms\Components\TextInput::make('number_of_compounds')
-                    ->numeric()
-                    ->default(0)
-                    ->label(__('companies.fields.number_of_compounds')),
-                Forms\Components\TextInput::make('number_of_available_units')
-                    ->numeric()
-                    ->default(0)
-                    ->label(__('companies.fields.number_of_available_units')),
+                Forms\Components\Section::make(__('companies.sections.basic_info'))
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label(__('companies.fields.name'))
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('name_ar')
+                            ->maxLength(255)
+                            ->label(__('companies.fields.name_ar'))
+                            ->columnSpan(1),
+                        Forms\Components\FileUpload::make('logo')
+                            ->image()
+                            ->disk('public')
+                            ->directory('company-logos')
+                            ->label(__('companies.fields.logo'))
+                            ->imageEditor()
+                            ->columnSpan(2),
+                        Forms\Components\TagsInput::make('developer_areas')
+                            ->label('Developer Areas / مناطق المطور')
+                            ->placeholder('Add area / أضف منطقة')
+                            ->helperText('Areas where this developer operates / المناطق التي يعمل فيها المطور')
+                            ->columnSpan(2),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
+                Forms\Components\Section::make(__('companies.sections.contact_info'))
+                    ->schema([
+                        Forms\Components\TextInput::make('website')
+                            ->url()
+                            ->maxLength(255)
+                            ->label(__('companies.fields.website'))
+                            ->prefixIcon('heroicon-o-globe-alt')
+                            ->placeholder('https://example.com')
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->maxLength(255)
+                            ->label(__('companies.fields.email'))
+                            ->prefixIcon('heroicon-o-envelope')
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('phone')
+                            ->tel()
+                            ->maxLength(255)
+                            ->label(__('companies.fields.phone'))
+                            ->prefixIcon('heroicon-o-phone')
+                            ->placeholder('+20 xxx xxxx xxx')
+                            ->columnSpan(1),
+                        Forms\Components\TextInput::make('headquarters')
+                            ->maxLength(255)
+                            ->label(__('companies.fields.headquarters'))
+                            ->prefixIcon('heroicon-o-map-pin')
+                            ->placeholder('Cairo, Egypt')
+                            ->columnSpan(1),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
 
                 Forms\Components\Section::make(__('companies.sections.sales_team'))
                     ->schema([
@@ -150,19 +190,36 @@ class CompanyResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label(__('companies.fields.name')),
+                Tables\Columns\TextColumn::make('developer_areas')
+                    ->badge()
+                    ->separator(',')
+                    ->limit(2)
+                    ->label('Developer Areas / المناطق')
+                    ->toggleable()
+                    ->getStateUsing(function ($record) {
+                        if (empty($record->developer_areas)) {
+                            return null;
+                        }
+                        return is_array($record->developer_areas) ? $record->developer_areas : json_decode($record->developer_areas, true);
+                    }),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts([
                         'users' => fn ($query) => $query->where('role', 'sales')
                     ])
                     ->label(__('companies.fields.sales_team'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('number_of_compounds')
+                Tables\Columns\TextColumn::make('compounds_count')
+                    ->counts('compounds')
                     ->numeric()
                     ->sortable()
                     ->label(__('companies.fields.number_of_compounds')),
-                Tables\Columns\TextColumn::make('number_of_available_units')
+                Tables\Columns\TextColumn::make('available_units_count')
+                    ->getStateUsing(function ($record) {
+                        return \App\Models\Unit::whereHas('compound', function ($query) use ($record) {
+                            $query->where('company_id', $record->id);
+                        })->where('is_sold', false)->count();
+                    })
                     ->numeric()
-                    ->sortable()
                     ->label(__('companies.fields.number_of_available_units')),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -185,6 +242,11 @@ class CompanyResource extends Resource
                     ->label(__('companies.filters.has_compounds'))
                     ->query(fn (Builder $query): Builder =>
                         $query->where('number_of_compounds', '>', 0)
+                    ),
+                Tables\Filters\Filter::make('has_developer_areas')
+                    ->label('Has Developer Areas / لديه مناطق')
+                    ->query(fn (Builder $query): Builder =>
+                        $query->whereNotNull('developer_areas')
                     ),
                 Tables\Filters\SelectFilter::make('compounds_range')
                     ->label(__('companies.filters.compounds_range'))

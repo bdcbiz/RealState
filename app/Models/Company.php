@@ -19,6 +19,10 @@ class Company extends Authenticatable implements FilamentUser
         'name_en',
         'name_ar',
         'logo',
+        'developer_areas',
+        'website',
+        'headquarters',
+        'phone',
         'email',
         'password',
         'number_of_compounds',
@@ -34,6 +38,7 @@ class Company extends Authenticatable implements FilamentUser
 
     protected $casts = [
         'password' => 'hashed',
+        'developer_areas' => 'array',
     ];
 
     public function canAccessPanel(Panel $panel): bool
@@ -51,15 +56,18 @@ class Company extends Authenticatable implements FilamentUser
             return null;
         }
 
-        $baseUrl = "http://127.0.0.1:8001/storage";
-
         // If the logo already has a full URL, return it
         if (strpos($this->logo, 'http://') === 0 || strpos($this->logo, 'https://') === 0) {
             return $this->logo;
         }
 
-        // Otherwise construct the URL
-        return $baseUrl . '/' . $this->logo;
+        // If logo already starts with /storage/, just prepend the domain
+        if (strpos($this->logo, '/storage/') === 0) {
+            return url($this->logo);
+        }
+
+        // Otherwise construct the URL with /storage/ prefix
+        return url('/storage/' . ltrim($this->logo, '/'));
     }
 
     /**
@@ -96,6 +104,14 @@ class Company extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Get all areas where this company operates
+     */
+    public function areas()
+    {
+        return $this->belongsToMany(Area::class);
+    }
+
+    /**
      * Get all users belonging to this company
      */
     public function users()
@@ -109,5 +125,37 @@ class Company extends Authenticatable implements FilamentUser
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    /**
+     * Update the company statistics (compounds and units count)
+     */
+    public function updateStatistics()
+    {
+        $this->number_of_compounds = $this->compounds()->count();
+
+        $this->number_of_available_units = Unit::whereHas('compound', function ($query) {
+            $query->where('company_id', $this->id);
+        })->where('is_sold', false)->count();
+
+        $this->saveQuietly(); // Save without triggering events
+    }
+
+    /**
+     * Get the number of compounds for this company
+     */
+    public function getCompoundsCountAttribute()
+    {
+        return $this->compounds()->count();
+    }
+
+    /**
+     * Get the number of available units for this company
+     */
+    public function getAvailableUnitsCountAttribute()
+    {
+        return Unit::whereHas('compound', function ($query) {
+            $query->where('company_id', $this->id);
+        })->where('is_sold', false)->count();
     }
 }
