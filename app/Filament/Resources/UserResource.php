@@ -19,9 +19,20 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'User Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.User Management');
+    }
 
-    protected static ?string $navigationLabel = 'Users';
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Users');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.Users');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -35,47 +46,47 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Full Name'),
+                    ->label(__('messages.Full Name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label('Email Address'),
+                    ->label(__('messages.Email Address')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label('Phone Number'),
+                    ->label(__('messages.Phone Number')),
                 Forms\Components\Select::make('role')
                     ->options([
-                        'buyer' => 'Buyer',
-                        'company' => 'Company',
-                        'admin' => 'Admin',
+                        'buyer' => __('messages.Buyer'),
+                        'company' => __('messages.Company'),
+                        'admin' => __('messages.Admin'),
                     ])
                     ->default('buyer')
                     ->required()
                     ->reactive()
-                    ->label('Role'),
+                    ->label(__('messages.Role')),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')
                     ->directory('user-images')
-                    ->label('Profile Image')
+                    ->label(__('messages.Profile Image'))
                     ->visible(fn (Forms\Get $get) => $get('role') === 'company'),
                 Forms\Components\Toggle::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('messages.Verified'))
                     ->default(true),
                 Forms\Components\Toggle::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('messages.Banned'))
                     ->default(false),
                 Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label('Email Verified At'),
+                    ->label(__('messages.Email Verified At')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label('Password')
+                    ->label(__('messages.Password'))
                     ->revealable()
                     ->autocomplete('new-password'),
                 Forms\Components\TextInput::make('password_confirmation')
@@ -83,7 +94,7 @@ class UserResource extends Resource
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Confirm Password')
+                    ->label(__('messages.Confirm Password'))
                     ->revealable()
                     ->autocomplete('new-password'),
             ]);
@@ -95,18 +106,22 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
-                    ->label('Image')
+                    ->label(__('messages.Image'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('messages.Name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('messages.Email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('messages.Phone'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('role')
+                    ->label(__('messages.Role'))
                     ->colors([
                         'secondary' => 'buyer',
                         'warning' => 'sales',
@@ -115,20 +130,21 @@ class UserResource extends Resource
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('messages.Verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('messages.Banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->label('Created At'),
+                    ->label(__('messages.Created At')),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->label(__('messages.Updated At')),
             ])
             ->filters([
                 //

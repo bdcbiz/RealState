@@ -17,9 +17,20 @@ class SuperAdminResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'User Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.User Management');
+    }
 
-    protected static ?string $navigationLabel = 'Super Admins';
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Super Admins');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.Super Admins');
+    }
 
     public static function getEloquentQuery(): Builder
     {

@@ -1,0 +1,162 @@
+<?php
+
+return [
+    // Navigation Groups
+    'User Management' => 'User Management',
+    'Real Estate' => 'Real Estate',
+    'Sales Management' => 'Sales Management',
+    'Availability' => 'Availability',
+
+    // Resource Names
+    'Users' => 'Users',
+    'Companies' => 'Companies',
+    'Company Accounts' => 'Company Accounts',
+    'Super Admins' => 'Super Admins',
+    'Sales Team' => 'Sales Team',
+    'All Sales Team' => 'All Sales Team',
+    'Compounds' => 'Compounds',
+    'Units' => 'Units',
+    'Sales' => 'Sales',
+    'Sales Availability' => 'Sales Availability',
+    'Units Availability' => 'Units Availability',
+    'Merged Availability' => 'Merged Availability',
+    'All Discounts' => 'All Discounts',
+
+    // Common Fields
+    'Name' => 'Name',
+    'Full Name' => 'Full Name',
+    'Company Name' => 'Company Name',
+    'Email' => 'Email',
+    'Email Address' => 'Email Address',
+    'Phone' => 'Phone',
+    'Phone Number' => 'Phone Number',
+    'Password' => 'Password',
+    'Confirm Password' => 'Confirm Password',
+    'Role' => 'Role',
+    'Image' => 'Image',
+    'Profile Image' => 'Profile Image',
+    'Company Logo' => 'Company Logo',
+    'Logo' => 'Logo',
+    'Status' => 'Status',
+    'Created At' => 'Created At',
+    'Updated At' => 'Updated At',
+    'Email Verified At' => 'Email Verified At',
+    'Verified' => 'Verified',
+    'Banned' => 'Banned',
+    'Active' => 'Active',
+    'Inactive' => 'Inactive',
+
+    // Roles
+    'Buyer' => 'Buyer',
+    'Sales' => 'Sales',
+    'Admin' => 'Admin',
+    'Company' => 'Company',
+    'Super Admin' => 'Super Admin',
+
+    // Compound Fields
+    'Arabic Name' => 'Arabic Name',
+    'English Name' => 'English Name',
+    'Description' => 'Description',
+    'Arabic Description' => 'Arabic Description',
+    'English Description' => 'English Description',
+    'Location' => 'Location',
+    'Address' => 'Address',
+    'City' => 'City',
+    'Country' => 'Country',
+    'Latitude' => 'Latitude',
+    'Longitude' => 'Longitude',
+    'Total Units' => 'Total Units',
+
+    // Unit Fields
+    'Unit Number' => 'Unit Number',
+    'Unit Type' => 'Unit Type',
+    'Unit' => 'Unit',
+    'Compound' => 'Compound',
+    'Floor' => 'Floor',
+    'Floor Number' => 'Floor Number',
+    'Area' => 'Area',
+    'Area (sqm)' => 'Area (sqm)',
+    'Bedrooms' => 'Bedrooms',
+    'Bathrooms' => 'Bathrooms',
+    'Price' => 'Price',
+    'Original Price' => 'Original Price',
+    'Selling Price' => 'Selling Price',
+    'Discount' => 'Discount',
+    'Discount Percentage' => 'Discount Percentage',
+    'Discount Amount' => 'Discount Amount',
+    'Final Price' => 'Final Price',
+    'Available' => 'Available',
+    'Sold' => 'Sold',
+    'Reserved' => 'Reserved',
+    'Sale Date' => 'Sale Date',
+    'Contract Date' => 'Contract Date',
+
+    // Unit Types
+    'Apartment' => 'Apartment',
+    'Villa' => 'Villa',
+    'Studio' => 'Studio',
+    'Penthouse' => 'Penthouse',
+    'Duplex' => 'Duplex',
+    'Townhouse' => 'Townhouse',
+
+    // Sales Fields
+    'Buyer' => 'Buyer',
+    'Sales Person' => 'Sales Person',
+    'Commission' => 'Commission',
+    'Commission Rate' => 'Commission Rate',
+    'Commission Amount' => 'Commission Amount',
+    'Payment Method' => 'Payment Method',
+    'Payment Status' => 'Payment Status',
+    'Notes' => 'Notes',
+    'Contract Number' => 'Contract Number',
+
+    // Availability
+    'Start Date' => 'Start Date',
+    'End Date' => 'End Date',
+    'Day' => 'Day',
+    'Time Slot' => 'Time Slot',
+    'Is Available' => 'Is Available',
+
+    // Days of Week
+    'Monday' => 'Monday',
+    'Tuesday' => 'Tuesday',
+    'Wednesday' => 'Wednesday',
+    'Thursday' => 'Thursday',
+    'Friday' => 'Friday',
+    'Saturday' => 'Saturday',
+    'Sunday' => 'Sunday',
+
+    // Actions
+    'Create' => 'Create',
+    'Edit' => 'Edit',
+    'Delete' => 'Delete',
+    'Save' => 'Save',
+    'Cancel' => 'Cancel',
+    'Search' => 'Search',
+    'Filter' => 'Filter',
+    'Export' => 'Export',
+    'Import' => 'Import',
+    'View' => 'View',
+    'Details' => 'Details',
+
+    // Validation
+    'Required' => 'Required',
+    'Optional' => 'Optional',
+    'Min Length' => 'Min Length',
+    'Max Length' => 'Max Length',
+    'Invalid Email' => 'Invalid Email',
+    'Unique' => 'Unique',
+
+    // Dashboard
+    'Dashboard' => 'Dashboard',
+    'Welcome' => 'Welcome',
+    'Logout' => 'Logout',
+    'Profile' => 'Profile',
+    'Settings' => 'Settings',
+
+    // Statistics
+    'Total' => 'Total',
+    'Count' => 'Count',
+    'Average' => 'Average',
+    'Sum' => 'Sum',
+];

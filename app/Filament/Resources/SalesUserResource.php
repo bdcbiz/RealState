@@ -16,11 +16,27 @@ class SalesUserResource extends Resource
     protected static ?string $model = User::class;
     protected static ?string $slug = 'all-sales-team';
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationLabel = 'All Sales Team';
-    protected static ?string $modelLabel = 'Sales Person';
-    protected static ?string $pluralModelLabel = 'All Sales Team';
-    protected static ?string $navigationGroup = 'User Management';
     protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.User Management');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.All Sales Team');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.Sales Person');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('messages.All Sales Team');
+    }
 
     public static function getEloquentQuery(): Builder
     {

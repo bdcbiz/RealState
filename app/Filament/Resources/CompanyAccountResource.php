@@ -17,9 +17,20 @@ class CompanyAccountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
-    protected static ?string $navigationGroup = 'User Management';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('messages.User Management');
+    }
 
-    protected static ?string $navigationLabel = 'Companies';
+    public static function getNavigationLabel(): string
+    {
+        return __('messages.Company Accounts');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('messages.Company Accounts');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -33,39 +44,39 @@ class CompanyAccountResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Company Name'),
+                    ->label(__('messages.Company Name')),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->label('Email Address'),
+                    ->label(__('messages.Email Address')),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
                     ->maxLength(255)
-                    ->label('Phone Number'),
+                    ->label(__('messages.Phone Number')),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')
                     ->directory('company-images')
-                    ->label('Company Logo'),
+                    ->label(__('messages.Company Logo')),
                 Forms\Components\Hidden::make('role')
                     ->default('company'),
                 Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->label('Email Verified At'),
+                    ->label(__('messages.Email Verified At')),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state))
                     ->maxLength(255)
-                    ->label('Password')
+                    ->label(__('messages.Password'))
                     ->revealable(),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()
                     ->same('password')
                     ->dehydrated(false)
                     ->required(fn (string $context): bool => $context === 'create')
-                    ->label('Confirm Password')
+                    ->label(__('messages.Confirm Password'))
                     ->revealable(),
             ]);
     }
@@ -76,16 +87,18 @@ class CompanyAccountResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
-                    ->label('Logo')
+                    ->label(__('messages.Logo'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Company Name')
+                    ->label(__('messages.Company Name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('messages.Email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('messages.Phone'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('role')
@@ -98,15 +111,15 @@ class CompanyAccountResource extends Resource
                     ])
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_verified')
-                    ->label('Verified')
+                    ->label(__('messages.Verified'))
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('is_banned')
-                    ->label('Banned')
+                    ->label(__('messages.Banned'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->label('Created At')
+                    ->label(__('messages.Created At'))
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
