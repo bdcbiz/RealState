@@ -67,6 +67,11 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        // Seed Egyptian Cities
+        $this->call([
+            CitiesSeeder::class,
+        ]);
+
         $this->command->info('Database seeded successfully!');
         $this->command->info('Admin: admin@realestate.com / password');
         $this->command->info('Company Admin: company-admin@bdcbiz.com / password');
