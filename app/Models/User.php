@@ -96,8 +96,12 @@ class User extends Authenticatable
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        // Allow all authenticated users to access the admin panel
-        // Modify this logic to restrict access as needed
+        // Admin panel: allow admin users
+        if ($panel->getId() === 'admin') {
+            return in_array($this->role, ['admin', 'seller', 'buyer']);
+        }
+
+        // Allow all authenticated users by default
         return true;
     }
 }
