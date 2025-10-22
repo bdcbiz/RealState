@@ -27,6 +27,9 @@ class User extends Authenticatable implements FilamentUser
         'role',
         'company_id',
         'fcm_token',
+        'is_verified',
+        'is_banned',
+        'image',
     ];
 
     /**
