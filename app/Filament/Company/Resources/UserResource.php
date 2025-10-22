@@ -25,12 +25,12 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Company IS the authenticated user, so use auth()->id()
+        // Company IS the authenticated user, so use auth()->user()?->company_id
         // Only show buyers who have purchased units from this company's compounds
         return parent::getEloquentQuery()
             ->where('role', 'buyer')
             ->whereHas('purchasedUnits.compound', function ($query) {
-                $query->where('company_id', auth()->id());
+                $query->where('company_id', auth()->user()?->company_id);
             });
     }
 
@@ -78,7 +78,7 @@ class UserResource extends Resource
                     ->separator(',')
                     ->getStateUsing(function ($record) {
                         return $record->purchasedUnits()
-                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->id()))
+                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->user()?->company_id))
                             ->with('compound')
                             ->get()
                             ->pluck('compound.project')
@@ -91,7 +91,7 @@ class UserResource extends Resource
                     ->separator(',')
                     ->getStateUsing(function ($record) {
                         return $record->purchasedUnits()
-                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->id()))
+                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->user()?->company_id))
                             ->get()
                             ->pluck('unit_name');
                     }),
@@ -101,7 +101,7 @@ class UserResource extends Resource
                     ->separator(',')
                     ->getStateUsing(function ($record) {
                         return $record->purchasedUnits()
-                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->id()))
+                            ->whereHas('compound', fn($q) => $q->where('company_id', auth()->user()?->company_id))
                             ->get()
                             ->pluck('total_pricing');
                     }),

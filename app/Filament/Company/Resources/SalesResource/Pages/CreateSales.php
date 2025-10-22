@@ -12,8 +12,8 @@ class CreateSales extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['role'] = 'sales';
-        // Company IS the authenticated user, so use auth()->id()
-        $data['company_id'] = auth()->id();
+        // Company IS the authenticated user, so use auth()->user()?->company_id
+        $data['company_id'] = auth()->user()?->company_id;
 
         return $data;
     }

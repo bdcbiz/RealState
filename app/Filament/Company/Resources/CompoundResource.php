@@ -23,8 +23,8 @@ class CompoundResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Company IS the authenticated user, so use auth()->id()
-        $companyId = auth()->id();
+        // Get the authenticated user's company_id
+        $companyId = auth()->user()?->company_id;
 
         if ($companyId) {
             return parent::getEloquentQuery()->where('company_id', $companyId);

@@ -27,15 +27,15 @@ class SaleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Company IS the authenticated user, so use auth()->id()
+        // Get the authenticated user's company_id
         return parent::getEloquentQuery()
-            ->where('company_id', auth()->id());
+            ->where('company_id', auth()->user()?->company_id);
     }
 
     public static function form(Form $form): Form
     {
-        // Company IS the authenticated user, so use auth()->id()
-        $companyId = auth()->id();
+        // Get the authenticated user's company_id
+        $companyId = auth()->user()?->company_id;
 
         return $form->schema([
             Forms\Components\Section::make('Sale Information')->schema([
@@ -115,7 +115,7 @@ class SaleResource extends Resource
                 Forms\Components\Toggle::make('is_active')->default(true),
             ])->columns(3),
 
-            Forms\Components\Hidden::make('company_id')->default(auth()->id()),
+            Forms\Components\Hidden::make('company_id')->default(auth()->user()?->company_id),
         ]);
     }
 

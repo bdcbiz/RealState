@@ -12,8 +12,8 @@ class CompanyStatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        // Company IS the authenticated user, so use auth()->id()
-        $companyId = auth()->id();
+        // Company IS the authenticated user, so use auth()->user()?->company_id
+        $companyId = auth()->user()?->company_id;
 
         // Count compounds
         $totalCompounds = Compound::where('company_id', $companyId)->count();

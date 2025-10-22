@@ -62,9 +62,9 @@ class UnitsRelationManager extends RelationManager
                 Forms\Components\Select::make('sales_id')
                     ->label('Sales Person')
                     ->relationship('sales', 'name', function ($query) {
-                        // Company IS the authenticated user, so use auth()->id()
+                        // Company IS the authenticated user, so use auth()->user()?->company_id
                         return $query->where('role', 'sales')
-                                    ->where('company_id', auth()->id());
+                                    ->where('company_id', auth()->user()?->company_id);
                     })
                     ->searchable()
                     ->preload()

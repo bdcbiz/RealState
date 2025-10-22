@@ -23,9 +23,11 @@ class UnitResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Company IS the authenticated user, so use auth()->id()
-        return parent::getEloquentQuery()->whereHas('compound', function ($query) {
-            $query->where('company_id', auth()->id());
+        // Get the authenticated user's company_id
+        $companyId = auth()->user()?->company_id;
+
+        return parent::getEloquentQuery()->whereHas('compound', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
         });
     }
 

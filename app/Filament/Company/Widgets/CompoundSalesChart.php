@@ -15,8 +15,8 @@ class CompoundSalesChart extends ChartWidget
 
     protected function getData(): array
     {
-        // Company IS the authenticated user, so use auth()->id()
-        $companyId = auth()->id();
+        // Company IS the authenticated user, so use auth()->user()?->company_id
+        $companyId = auth()->user()?->company_id;
 
         $compounds = Compound::where('company_id', $companyId)
             ->withCount(['units as sold_units_count' => function ($query) {

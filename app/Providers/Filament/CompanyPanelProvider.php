@@ -26,7 +26,7 @@ class CompanyPanelProvider extends PanelProvider
             ->id('company')
             ->path('company')
             ->login()
-            ->authGuard('company')
+            ->authGuard('web')
             ->brandName('Company Portal')
             ->colors([
                 'primary' => Color::Amber,
