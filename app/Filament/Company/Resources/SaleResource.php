@@ -101,7 +101,7 @@ class SaleResource extends Resource
                         }
                     }),
                 Forms\Components\TextInput::make('old_price')
-                    ->required()->numeric()->prefix('EGP')
+                    ->numeric()->prefix('EGP')
                     ->reactive()
                     ->label('Original Price')
                     ->helperText('Auto-filled from selected unit, or enter manually')
@@ -112,7 +112,7 @@ class SaleResource extends Resource
                         }
                     }),
                 Forms\Components\TextInput::make('new_price')
-                    ->required()->numeric()->prefix('EGP')
+                    ->numeric()->prefix('EGP')
                     ->disabled()
                     ->dehydrated()
                     ->label('Sale Price')
