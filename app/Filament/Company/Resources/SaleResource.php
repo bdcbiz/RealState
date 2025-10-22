@@ -76,6 +76,10 @@ class SaleResource extends Resource
                                     $newPrice = $oldPrice - ($oldPrice * $discount / 100);
                                     $set('new_price', $newPrice);
                                 }
+                            } else {
+                                // Clear old_price if unit has no price (user must enter manually)
+                                $set('old_price', null);
+                                $set('new_price', null);
                             }
                         }
                     }),
@@ -92,15 +96,21 @@ class SaleResource extends Resource
                     ->reactive()
                     ->afterStateUpdated(function ($get, $set, $state) {
                         if ($oldPrice = $get('old_price')) {
-                            $set('new_price', $oldPrice - ($oldPrice * $state / 100));
+                            $newPrice = $oldPrice - ($oldPrice * $state / 100);
+                            $set('new_price', $newPrice);
                         }
                     }),
                 Forms\Components\TextInput::make('old_price')
                     ->required()->numeric()->prefix('EGP')
-                    ->disabled()
-                    ->dehydrated()
+                    ->reactive()
                     ->label('Original Price')
-                    ->helperText('Auto-filled from selected unit'),
+                    ->helperText('Auto-filled from selected unit, or enter manually')
+                    ->afterStateUpdated(function ($get, $set, $state) {
+                        if ($state && $discount = $get('discount_percentage')) {
+                            $newPrice = $state - ($state * $discount / 100);
+                            $set('new_price', $newPrice);
+                        }
+                    }),
                 Forms\Components\TextInput::make('new_price')
                     ->required()->numeric()->prefix('EGP')
                     ->disabled()
