@@ -41,7 +41,8 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('role', 'buyer');
+        // Show all users (buyer, company, seller, admin)
+        return parent::getEloquentQuery();
     }
 
     public static function form(Form $form): Form
