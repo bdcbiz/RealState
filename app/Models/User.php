@@ -97,9 +97,9 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        // Admin panel: allow admin users
+        // Admin panel: allow admin and company users
         if ($panel->getId() === 'admin') {
-            return in_array($this->role, ['admin', 'seller', 'buyer']);
+            return in_array($this->role, ['admin', 'seller', 'buyer', 'company']);
         }
 
         // Allow all authenticated users by default

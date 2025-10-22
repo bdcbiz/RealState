@@ -72,6 +72,14 @@ class UserResource extends Resource
                     ->required()
                     ->reactive()
                     ->label(__('user.fields.role')),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->label(__('user.fields.company'))
+                    ->visible(fn (Forms\Get $get) => $get('role') === 'company')
+                    ->placeholder('Select a company'),
                 Forms\Components\FileUpload::make('image')
                     ->image()
                     ->disk('public')
@@ -134,6 +142,11 @@ class UserResource extends Resource
                         'info' => 'company',
                     ])
                     ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->label(__('user.fields.company'))
+                    ->searchable()
+                    ->sortable()
+                    ->default('N/A'),
                 Tables\Columns\ToggleColumn::make('is_verified')
                     ->label(__('user.fields.verified'))
                     ->sortable(),

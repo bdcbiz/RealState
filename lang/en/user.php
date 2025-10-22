@@ -14,6 +14,7 @@ return [
         'email' => 'Email Address',
         'phone' => 'Phone Number',
         'role' => 'Role',
+        'company' => 'Company',
         'image' => 'Profile Image',
         'password' => 'Password',
         'password_confirmation' => 'Confirm Password',
