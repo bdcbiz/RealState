@@ -17,7 +17,7 @@ class CompoundController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $query = Compound::with('company:id,name,logo')
+            $query = Compound::with(['company:id,name,logo', 'salesPerson:id,name,email,phone,image'])
                 ->withCount([
                     'units as total_units',
                     'units as sold_units' => function($q) {
@@ -65,6 +65,20 @@ class CompoundController extends Controller
                     $compound->company_logo_url = $compound->company->logo_url;
                 }
 
+                // Add sales person details if available
+                if ($compound->salesPerson) {
+                    $compound->sales_person = [
+                        'id' => $compound->salesPerson->id,
+                        'name' => $compound->salesPerson->name,
+                        'email' => $compound->salesPerson->email,
+                        'phone' => $compound->salesPerson->phone,
+                        'image' => $compound->salesPerson->image
+                    ];
+                    unset($compound->salesPerson);
+                } else {
+                    $compound->sales_person = null;
+                }
+
                 unset($compound->company);
             });
 
@@ -96,7 +110,7 @@ class CompoundController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-            $compound = Compound::with('company:id,name,logo')
+            $compound = Compound::with(['company:id,name,logo', 'salesPerson:id,name,email,phone,image'])
                 ->withCount([
                     'units as total_units',
                     'units as sold_units' => function($q) {
@@ -125,6 +139,20 @@ class CompoundController extends Controller
                 $compound->company_logo_url = $compound->company->logo_url;
 
                 unset($compound->company);
+            }
+
+            // Add sales person details if available
+            if ($compound->salesPerson) {
+                $compound->sales_person = [
+                    'id' => $compound->salesPerson->id,
+                    'name' => $compound->salesPerson->name,
+                    'email' => $compound->salesPerson->email,
+                    'phone' => $compound->salesPerson->phone,
+                    'image' => $compound->salesPerson->image
+                ];
+                unset($compound->salesPerson);
+            } else {
+                $compound->sales_person = null;
             }
 
             return response()->json([

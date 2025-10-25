@@ -19,8 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
 
-        // Apply localization and JSON encoding to all API responses
+        // Apply localization, JSON encoding, and CORS to all API responses
         $middleware->api(append: [
+            \Illuminate\Http\Middleware\HandleCors::class,
             \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\ForceJsonResponse::class,
         ]);

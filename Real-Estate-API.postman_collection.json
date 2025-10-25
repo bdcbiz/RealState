@@ -1,0 +1,1246 @@
+{
+  "info": {
+    "name": "Real Estate API",
+    "_postman_id": "real-estate-api-collection",
+    "description": "Complete API collection for Real Estate Application\n\nBase URL: https://aqar.bdcbiz.com/api\n\nAuthentication: Most endpoints require Bearer token (use {{token}} variable)\n\nPublic Endpoints: /register, /login, /companies, /compounds, /sales",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://aqar.bdcbiz.com/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"01234567890\",\n  \"role\": \"buyer\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            },
+            "description": "Register a new user account\n\nRoles: buyer, agent, seller, company, admin"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            },
+            "description": "Login and get Bearer token\n\nAuto-saves token to collection variable"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            },
+            "description": "Logout and invalidate token (Requires authentication)"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            },
+            "description": "Get authenticated user details"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Companies",
+      "item": [
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/companies",
+              "host": ["{{base_url}}"],
+              "path": ["companies"]
+            },
+            "description": "Get list of all companies (Public access)"
+          }
+        },
+        {
+          "name": "Get Company by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/companies/154",
+              "host": ["{{base_url}}"],
+              "path": ["companies", "154"]
+            },
+            "description": "Get specific company details (Public access)\n\nExample: Company ID 154 = Palm Hills Developments"
+          }
+        },
+        {
+          "name": "Get Companies with Sales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/companies-with-sales",
+              "host": ["{{base_url}}"],
+              "path": ["companies-with-sales"]
+            },
+            "description": "Get companies that have active sales/discounts (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Compounds",
+      "item": [
+        {
+          "name": "Get All Compounds",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compounds",
+              "host": ["{{base_url}}"],
+              "path": ["compounds"]
+            },
+            "description": "Get list of all compounds/projects (Public access)"
+          }
+        },
+        {
+          "name": "Get Compound by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compounds/1",
+              "host": ["{{base_url}}"],
+              "path": ["compounds", "1"]
+            },
+            "description": "Get specific compound details (Public access)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Sales & Discounts",
+      "item": [
+        {
+          "name": "Get All Sales",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sales",
+              "host": ["{{base_url}}"],
+              "path": ["sales"]
+            },
+            "description": "Get all active sales and discounts (Public access)"
+          }
+        },
+        {
+          "name": "Get Sale by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sales/1",
+              "host": ["{{base_url}}"],
+              "path": ["sales", "1"]
+            },
+            "description": "Get specific sale details (Public access)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Units",
+      "item": [
+        {
+          "name": "Get All Units",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units",
+              "host": ["{{base_url}}"],
+              "path": ["units"]
+            },
+            "description": "Get list of all units (Requires authentication)"
+          }
+        },
+        {
+          "name": "Get Unit by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units/1",
+              "host": ["{{base_url}}"],
+              "path": ["units", "1"]
+            },
+            "description": "Get specific unit details (Requires authentication)"
+          }
+        },
+        {
+          "name": "Filter Units (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"compound_id\": 1,\n  \"min_price\": 1000000,\n  \"max_price\": 5000000,\n  \"unit_type\": \"apartment\",\n  \"min_area\": 100,\n  \"max_area\": 200\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/filter-units",
+              "host": ["{{base_url}}"],
+              "path": ["filter-units"]
+            },
+            "description": "Filter units by criteria (Requires authentication)"
+          }
+        },
+        {
+          "name": "Filter Units (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/filter-units?compound_id=1&min_price=1000000&max_price=5000000",
+              "host": ["{{base_url}}"],
+              "path": ["filter-units"],
+              "query": [
+                {
+                  "key": "compound_id",
+                  "value": "1"
+                },
+                {
+                  "key": "min_price",
+                  "value": "1000000"
+                },
+                {
+                  "key": "max_price",
+                  "value": "5000000"
+                }
+              ]
+            },
+            "description": "Filter units using query parameters (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Search",
+      "item": [
+        {
+          "name": "Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/search?q=palm+hills",
+              "host": ["{{base_url}}"],
+              "path": ["search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "palm+hills"
+                }
+              ]
+            },
+            "description": "Search across companies, compounds, and units (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. User Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": ["{{base_url}}"],
+              "path": ["profile"]
+            },
+            "description": "Get authenticated user profile (Requires authentication)"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"phone\": \"01234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": ["{{base_url}}"],
+              "path": ["profile"]
+            },
+            "description": "Update user profile (Requires authentication)"
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123\",\n  \"new_password\": \"newpassword123\",\n  \"new_password_confirmation\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["change-password"]
+            },
+            "description": "Change user password (Requires authentication)"
+          }
+        },
+        {
+          "name": "Get User by Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user-by-email?email=john@example.com",
+              "host": ["{{base_url}}"],
+              "path": ["user-by-email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "john@example.com"
+                }
+              ]
+            },
+            "description": "Find user by email address (Requires authentication)"
+          }
+        },
+        {
+          "name": "Get Salespeople by Compound",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/salespeople-by-compound?compound_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["salespeople-by-compound"],
+              "query": [
+                {
+                  "key": "compound_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get salespeople for a specific compound (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Favorites",
+      "item": [
+        {
+          "name": "Get My Favorites",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["favorites"]
+            },
+            "description": "Get user's favorite units (Requires authentication)"
+          }
+        },
+        {
+          "name": "Add to Favorites",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unit_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["favorites"]
+            },
+            "description": "Add unit to favorites (Requires authentication)"
+          }
+        },
+        {
+          "name": "Remove from Favorites",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unit_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["favorites"]
+            },
+            "description": "Remove unit from favorites (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Saved Searches",
+      "item": [
+        {
+          "name": "Get All Saved Searches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/saved-searches",
+              "host": ["{{base_url}}"],
+              "path": ["saved-searches"]
+            },
+            "description": "Get user's saved searches (Requires authentication)"
+          }
+        },
+        {
+          "name": "Get Saved Search by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/saved-searches/1",
+              "host": ["{{base_url}}"],
+              "path": ["saved-searches", "1"]
+            },
+            "description": "Get specific saved search (Requires authentication)"
+          }
+        },
+        {
+          "name": "Create Saved Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apartments in Palm Hills\",\n  \"criteria\": {\n    \"compound_id\": 1,\n    \"min_price\": 1000000,\n    \"max_price\": 3000000,\n    \"unit_type\": \"apartment\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/saved-searches",
+              "host": ["{{base_url}}"],
+              "path": ["saved-searches"]
+            },
+            "description": "Save a search for later (Requires authentication)"
+          }
+        },
+        {
+          "name": "Update Saved Search",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Search Name\",\n  \"criteria\": {\n    \"compound_id\": 1,\n    \"min_price\": 2000000\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/saved-searches/1",
+              "host": ["{{base_url}}"],
+              "path": ["saved-searches", "1"]
+            },
+            "description": "Update saved search (Requires authentication)"
+          }
+        },
+        {
+          "name": "Delete Saved Search",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/saved-searches/1",
+              "host": ["{{base_url}}"],
+              "path": ["saved-searches", "1"]
+            },
+            "description": "Delete saved search (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Statistics",
+      "item": [
+        {
+          "name": "Get Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics",
+              "host": ["{{base_url}}"],
+              "path": ["statistics"]
+            },
+            "description": "Get system statistics (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Notifications (FCM)",
+      "item": [
+        {
+          "name": "Register FCM Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"your-firebase-device-token-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/fcm-token",
+              "host": ["{{base_url}}"],
+              "path": ["fcm-token"]
+            },
+            "description": "Register device FCM token for push notifications (Requires authentication)"
+          }
+        },
+        {
+          "name": "Delete FCM Token",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"your-firebase-device-token-here\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/fcm-token",
+              "host": ["{{base_url}}"],
+              "path": ["fcm-token"]
+            },
+            "description": "Unregister device FCM token (Requires authentication)"
+          }
+        },
+        {
+          "name": "Send Notification to All",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Test Notification\",\n  \"body\": \"This is a test notification\",\n  \"data\": {\n    \"type\": \"test\",\n    \"message\": \"Testing\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications/send-all",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-all"]
+            },
+            "description": "Send notification to all users (Admin only) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Send Notification by Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"buyer\",\n  \"title\": \"Special Offer!\",\n  \"body\": \"Check out our new units\",\n  \"data\": {\n    \"type\": \"offer\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications/send-role",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-role"]
+            },
+            "description": "Send notification to specific role (buyer, agent, seller) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Send Notification to Topic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"palm_hills\",\n  \"title\": \"Palm Hills Update\",\n  \"body\": \"New units available\",\n  \"data\": {\n    \"company_id\": \"154\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/notifications/send-topic",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "send-topic"]
+            },
+            "description": "Send notification to FCM topic (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Admin - Units",
+      "item": [
+        {
+          "name": "Create Unit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"compound_id\": 1,\n  \"unit_name\": \"A-101\",\n  \"unit_code\": \"PH-A-101\",\n  \"unit_type\": \"apartment\",\n  \"number_of_beds\": 3,\n  \"built_up_area\": 150,\n  \"normal_price\": 2500000,\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/units",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "units"]
+            },
+            "description": "Create new unit (Admin only, auto-sends FCM notification) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Update Unit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"normal_price\": 2300000,\n  \"status\": \"reserved\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/units/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "units", "1"]
+            },
+            "description": "Update unit (Admin only, auto-sends FCM notification on price drop) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Delete Unit",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/units/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "units", "1"]
+            },
+            "description": "Delete unit (Admin only) (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Admin - Sales",
+      "item": [
+        {
+          "name": "Create Sale",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company_id\": 154,\n  \"sale_type\": \"unit\",\n  \"unit_id\": 1,\n  \"sale_name\": \"Spring Sale 2025\",\n  \"discount_percentage\": 20,\n  \"old_price\": 2500000,\n  \"new_price\": 2000000,\n  \"start_date\": \"2025-03-01\",\n  \"end_date\": \"2025-03-31\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/sales",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "sales"]
+            },
+            "description": "Create new sale/discount (Admin only, auto-sends FCM notification) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Update Sale",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discount_percentage\": 25,\n  \"new_price\": 1875000,\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/sales/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "sales", "1"]
+            },
+            "description": "Update sale (Admin only) (Requires authentication)"
+          }
+        },
+        {
+          "name": "Delete Sale",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/sales/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "sales", "1"]
+            },
+            "description": "Delete sale (Admin only) (Requires authentication)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Other Resources",
+      "item": [
+        {
+          "name": "Stages - Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/stages",
+              "host": ["{{base_url}}"],
+              "path": ["stages"]
+            },
+            "description": "Get all stages (Requires authentication)"
+          }
+        },
+        {
+          "name": "Unit Types - Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/unit-types",
+              "host": ["{{base_url}}"],
+              "path": ["unit-types"]
+            },
+            "description": "Get all unit types (Requires authentication)"
+          }
+        },
+        {
+          "name": "Finish Specs - Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/finish-specs",
+              "host": ["{{base_url}}"],
+              "path": ["finish-specs"]
+            },
+            "description": "Get all finish specifications (Requires authentication)"
+          }
+        },
+        {
+          "name": "Share Link - Get Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/share-link?unit_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["share-link"],
+              "query": [
+                {
+                  "key": "unit_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get shareable link data for a unit (Requires authentication)"
+          }
+        }
+      ]
+    }
+  ]
+}

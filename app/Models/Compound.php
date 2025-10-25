@@ -15,6 +15,8 @@ class Compound extends Model
         'project_en',
         'project_ar',
         'company_id',
+        'current_sale_id',
+        'sales_person_id',
         'location',
         'location_en',
         'location_ar',
@@ -53,19 +55,76 @@ class Compound extends Model
     protected $appends = ['images_urls', 'project_translated', 'location_translated', 'project_localized', 'location_localized', 'status_localized'];
 
     /**
+     * Boot the model and add event listeners
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Log activity when compound is created
+        static::created(function ($compound) {
+            Activity::log(
+                'created',
+                $compound,
+                "New compound '{$compound->project}' created",
+                [
+                    'location' => $compound->location,
+                    'total_units' => $compound->total_units,
+                ],
+                null,
+                $compound->company_id
+            );
+        });
+
+        // Log activity when compound is updated
+        static::updated(function ($compound) {
+            $changes = $compound->getChanges();
+            unset($changes['updated_at']);
+
+            if (!empty($changes)) {
+                Activity::log(
+                    'updated',
+                    $compound,
+                    "Compound '{$compound->project}' was updated",
+                    [
+                        'changes' => $changes,
+                    ],
+                    null,
+                    $compound->company_id
+                );
+            }
+        });
+
+        // Log activity when compound is deleted
+        static::deleted(function ($compound) {
+            Activity::log(
+                'deleted',
+                $compound,
+                "Compound '{$compound->project}' was deleted",
+                [
+                    'project' => $compound->project,
+                ],
+                null,
+                $compound->company_id
+            );
+        });
+    }
+
+    /**
      * Get processed image URLs
      */
     public function getImagesUrlsAttribute()
     {
-        $baseUrl = "http://127.0.0.1:8001/storage";
         $images = [];
 
         if ($this->images && is_array($this->images)) {
             foreach ($this->images as $img) {
+                // If already a full URL, return as is
                 if (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
                     $images[] = $img;
                 } else {
-                    $images[] = $baseUrl . '/' . $img;
+                    // Use url() helper like Company logo - automatically uses APP_URL
+                    $images[] = url('/storage/' . ltrim($img, '/'));
                 }
             }
         }
@@ -140,5 +199,29 @@ class Compound extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Get the current active sale for this compound
+     */
+    public function currentSale()
+    {
+        return $this->belongsTo(Sale::class, 'current_sale_id');
+    }
+
+    /**
+     * Get all sales for this compound
+     */
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    /**
+     * Get the sales person assigned to this compound
+     */
+    public function salesPerson()
+    {
+        return $this->belongsTo(User::class, 'sales_person_id');
     }
 }

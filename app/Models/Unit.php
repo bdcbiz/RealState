@@ -29,6 +29,58 @@ class Unit extends Model
                 }
             }
         });
+
+        // Log activity when unit is created
+        static::created(function ($unit) {
+            $compound = $unit->compound;
+            Activity::log(
+                'created',
+                $unit,
+                "New unit '{$unit->unit_code}' created" . ($compound ? " in {$compound->project}" : ""),
+                [
+                    'unit_type' => $unit->unit_type,
+                    'usage_type' => $unit->usage_type,
+                    'normal_price' => $unit->normal_price,
+                ],
+                null,
+                $compound->company_id ?? null
+            );
+        });
+
+        // Log activity when unit is updated
+        static::updated(function ($unit) {
+            $changes = $unit->getChanges();
+            unset($changes['updated_at']);
+
+            if (!empty($changes)) {
+                $compound = $unit->compound;
+                Activity::log(
+                    'updated',
+                    $unit,
+                    "Unit '{$unit->unit_code}' was updated",
+                    [
+                        'changes' => $changes,
+                    ],
+                    null,
+                    $compound->company_id ?? null
+                );
+            }
+        });
+
+        // Log activity when unit is deleted
+        static::deleted(function ($unit) {
+            $compound = $unit->compound;
+            Activity::log(
+                'deleted',
+                $unit,
+                "Unit '{$unit->unit_code}' was deleted",
+                [
+                    'unit_code' => $unit->unit_code,
+                ],
+                null,
+                $compound->company_id ?? null
+            );
+        });
     }
 
     protected $fillable = [
@@ -72,15 +124,16 @@ class Unit extends Model
      */
     public function getImagesUrlsAttribute()
     {
-        $baseUrl = "http://127.0.0.1:8001/storage";
         $images = [];
 
         if ($this->images && is_array($this->images)) {
             foreach ($this->images as $img) {
+                // If already a full URL, return as is
                 if (strpos($img, 'http://') === 0 || strpos($img, 'https://') === 0) {
                     $images[] = $img;
                 } else {
-                    $images[] = $baseUrl . '/' . $img;
+                    // Use url() helper like Company logo - automatically uses APP_URL
+                    $images[] = url('/storage/' . ltrim($img, '/'));
                 }
             }
         }

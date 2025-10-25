@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\FCMTokenController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Admin\UnitAdminController;
 use App\Http\Controllers\Admin\SaleAdminController;
+use App\Http\Controllers\ActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +49,11 @@ Route::get('/compounds', [CompoundController::class, 'index']);
 Route::get('/compounds/{id}', [CompoundController::class, 'show']);
 Route::get('/sales', [SalesController::class, 'index']);
 Route::get('/sales/{id}', [SalesController::class, 'show']);
+
+// ACTIVITIES - Recent updates for the app
+Route::get('/activities', [ActivityController::class, 'index']);
+Route::get('/activities/recent', [ActivityController::class, 'recent']);
+Route::get('/activities/stats', [ActivityController::class, 'stats']);
 
 
 // ============================================================
@@ -126,6 +132,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
+
+    // ACTIVITIES - Detailed activity logs (protected)
+    Route::get('/activities/{id}', [ActivityController::class, 'show']);
+    Route::get('/activities/action/{action}', [ActivityController::class, 'byAction']);
+    Route::get('/activities/subject/{subjectType}/{subjectId}', [ActivityController::class, 'bySubject']);
 
     // FCM TOKEN (Push Notifications)
     Route::post('/fcm-token', [FCMTokenController::class, 'store']);

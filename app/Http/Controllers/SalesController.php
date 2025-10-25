@@ -17,7 +17,7 @@ class SalesController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $baseUrl = "http://127.0.0.1:8001/storage";
+            $baseUrl = url('/storage');
 
             $query = Sale::with(['company', 'salesPerson', 'unit.compound', 'compound']);
 
@@ -57,15 +57,22 @@ class SalesController extends Controller
                 $compoundName = null;
                 $images = [];
 
+                // First, try to get images from sale itself
+                if ($sale->images && is_array($sale->images)) {
+                    $images = $this->processImages($sale->images, $baseUrl);
+                }
+
                 if ($sale->sale_type === 'unit' && $sale->unit) {
                     $itemName = $sale->unit->unit_name;
                     $compoundName = $sale->unit->compound->project ?? null;
-                    if ($sale->unit->images) {
+                    // Only get unit images if sale doesn't have images
+                    if (empty($images) && $sale->unit->images) {
                         $images = $this->processImages($sale->unit->images, $baseUrl);
                     }
                 } elseif ($sale->sale_type === 'compound' && $sale->compound) {
                     $itemName = $sale->compound->project;
-                    if ($sale->compound->images) {
+                    // Only get compound images if sale doesn't have images
+                    if (empty($images) && $sale->compound->images) {
                         $images = $this->processImages($sale->compound->images, $baseUrl);
                     }
                 }
@@ -153,7 +160,7 @@ class SalesController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-            $baseUrl = "http://127.0.0.1:8001/storage";
+            $baseUrl = url('/storage');
 
             $sale = Sale::with(['company', 'salesPerson', 'unit.compound', 'compound'])
                 ->find($id);
@@ -170,15 +177,22 @@ class SalesController extends Controller
             $compoundName = null;
             $images = [];
 
+            // First, try to get images from sale itself
+            if ($sale->images && is_array($sale->images)) {
+                $images = $this->processImages($sale->images, $baseUrl);
+            }
+
             if ($sale->sale_type === 'unit' && $sale->unit) {
                 $itemName = $sale->unit->unit_name;
                 $compoundName = $sale->unit->compound->project ?? null;
-                if ($sale->unit->images) {
+                // Only get unit images if sale doesn't have images
+                if (empty($images) && $sale->unit->images) {
                     $images = $this->processImages($sale->unit->images, $baseUrl);
                 }
             } elseif ($sale->sale_type === 'compound' && $sale->compound) {
                 $itemName = $sale->compound->project;
-                if ($sale->compound->images) {
+                // Only get compound images if sale doesn't have images
+                if (empty($images) && $sale->compound->images) {
                     $images = $this->processImages($sale->compound->images, $baseUrl);
                 }
             }
@@ -261,7 +275,7 @@ class SalesController extends Controller
     public function getCompaniesWithSales(Request $request): JsonResponse
     {
         try {
-            $baseUrl = "http://127.0.0.1:8001/storage";
+            $baseUrl = url('/storage');
 
             $query = \App\Models\Company::with(['sales' => function($query) use ($request) {
                 // Filter by active sales only if specified
@@ -297,15 +311,22 @@ class SalesController extends Controller
                     $compoundName = null;
                     $images = [];
 
+                    // First, try to get images from sale itself
+                    if ($sale->images && is_array($sale->images)) {
+                        $images = $this->processImages($sale->images, $baseUrl);
+                    }
+
                     if ($sale->sale_type === 'unit' && $sale->unit) {
                         $itemName = $sale->unit->unit_name;
                         $compoundName = $sale->unit->compound->project ?? null;
-                        if ($sale->unit->images) {
+                        // Only get unit images if sale doesn't have images
+                        if (empty($images) && $sale->unit->images) {
                             $images = $this->processImages($sale->unit->images, $baseUrl);
                         }
                     } elseif ($sale->sale_type === 'compound' && $sale->compound) {
                         $itemName = $sale->compound->project;
-                        if ($sale->compound->images) {
+                        // Only get compound images if sale doesn't have images
+                        if (empty($images) && $sale->compound->images) {
                             $images = $this->processImages($sale->compound->images, $baseUrl);
                         }
                     }
