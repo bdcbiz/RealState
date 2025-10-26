@@ -5,25 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Favorite extends Model
+class UserHistory extends Model
 {
     use HasFactory;
 
-    protected $table = 'favorites';
+    protected $table = 'user_history';
 
     protected $fillable = [
         'user_id',
+        'action_type',
         'unit_id',
-        'compound_id'
+        'compound_id',
+        'search_query',
+        'metadata'
     ];
 
     protected $casts = [
+        'metadata' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
 
     /**
-     * Get the user that owns the favorite
+     * Get the user that owns the history entry
      */
     public function user()
     {
@@ -31,7 +35,7 @@ class Favorite extends Model
     }
 
     /**
-     * Get the unit that is favorited
+     * Get the unit associated with the history entry
      */
     public function unit()
     {
@@ -39,7 +43,7 @@ class Favorite extends Model
     }
 
     /**
-     * Get the compound that is favorited
+     * Get the compound associated with the history entry
      */
     public function compound()
     {

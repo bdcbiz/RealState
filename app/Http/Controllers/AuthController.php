@@ -43,9 +43,94 @@ class AuthController extends Controller
     }
 
     /**
-     * Login user
+     * Login user (supports both manual and Google login)
      */
     public function login(Request $request)
+    {
+        $loginMethod = $request->input('login_method', 'manual');
+
+        if ($loginMethod === 'google') {
+            return $this->handleGoogleLogin($request);
+        } else {
+            return $this->handleManualLogin($request);
+        }
+    }
+
+    /**
+     * Handle Google OAuth login with ID token verification
+     */
+    private function handleGoogleLogin(Request $request)
+    {
+        $request->validate([
+            'id_token' => 'required|string',
+        ]);
+
+        try {
+            // Verify the Google ID token
+            $client = new \Google_Client(['client_id' => config('services.google.client_id')]);
+            $payload = $client->verifyIdToken($request->id_token);
+
+            if (!$payload) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid Google ID token',
+                ], 401);
+            }
+
+            // Extract verified user information from token payload
+            $googleId = $payload['sub'];
+            $email = $payload['email'];
+            $name = $payload['name'] ?? 'Google User';
+            $photoUrl = $payload['picture'] ?? null;
+            $emailVerified = $payload['email_verified'] ?? false;
+
+            // Find or create user
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                // Create new user with verified Google account
+                $user = User::create([
+                    'name'          => $name,
+                    'email'         => $email,
+                    'google_id'     => $googleId,
+                    'photo_url'     => $photoUrl,
+                    'login_method'  => 'google',
+                    'password'      => Hash::make(uniqid()), // random dummy password
+                    'role'          => 'buyer', // default role
+                    'is_verified'   => $emailVerified, // Use Google's email verification status
+                ]);
+            } else {
+                // Update existing user with Google data
+                $user->update([
+                    'google_id'     => $googleId,
+                    'photo_url'     => $photoUrl ?? $user->photo_url,
+                    'login_method'  => 'google',
+                ]);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Google login successful',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Google authentication failed: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle manual email/password login
+     */
+    private function handleManualLogin(Request $request)
     {
         $request->validate([
             'email' => 'required|email',

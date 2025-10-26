@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Admin\UnitAdminController;
 use App\Http\Controllers\Admin\SaleAdminController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +133,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites', [FavoriteController::class, 'destroy']);
+
+    // USER HISTORY
+    Route::get('/history', [HistoryController::class, 'index']);
+    Route::post('/history', [HistoryController::class, 'store']);
+    Route::delete('/history/{id}', [HistoryController::class, 'destroy']);
+    Route::delete('/history-clear', [HistoryController::class, 'clear']);
+    Route::get('/history/recently-viewed', [HistoryController::class, 'recentlyViewed']);
+    Route::get('/history/searches', [HistoryController::class, 'searches']);
 
     // ACTIVITIES - Detailed activity logs (protected)
     Route::get('/activities/{id}', [ActivityController::class, 'show']);

@@ -30,6 +30,9 @@ class User extends Authenticatable implements FilamentUser
         'is_verified',
         'is_banned',
         'image',
+        'google_id',
+        'photo_url',
+        'login_method',
     ];
 
     /**

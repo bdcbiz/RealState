@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Favorite;
 use App\Models\Unit;
 use App\Models\Compound;
-use App\Models\Stage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class FavoriteController extends Controller
 {
@@ -21,82 +19,28 @@ class FavoriteController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            // In production, get user_id from authenticated user
-            $userId = $request->get('user_id');
+            // Get user_id from request parameter or authenticated user
+            $userId = $request->get('user_id', $request->user()->id);
 
-            if (!$userId) {
-                return response()->json([
-                    'error' => 'User ID is required'
-                ], 401);
-            }
-
-            $query = Favorite::where('user_id', $userId);
-
-            // Filter by type
-            if ($request->has('type')) {
-                $query->where('favoritable_type', $request->type);
-            }
-
-            $favorites = $query->orderBy('created_at', 'desc')->get();
-
-            // Load item details for each favorite
-            $favorites->each(function($favorite) {
-                $itemDetails = null;
-
-                switch($favorite->favoritable_type) {
-                    case 'unit':
-                        $unit = Unit::with(['stage.compound'])
-                            ->find($favorite->favoritable_id);
-                        if ($unit) {
-                            $itemDetails = [
-                                'id' => $unit->id,
-                                'unit_code' => $unit->unit_code,
-                                'status' => $unit->status,
-                                'base_price' => $unit->base_price,
-                                'total_price' => $unit->total_price,
-                                'compound_name' => $unit->stage->compound->name ?? null,
-                                'stage_name' => $unit->stage->stage_name ?? null
-                            ];
-                        }
-                        break;
-
-                    case 'compound':
-                        $compound = Compound::find($favorite->favoritable_id);
-                        if ($compound) {
-                            $itemDetails = [
-                                'id' => $compound->id,
-                                'name' => $compound->name,
-                                'location' => $compound->location,
-                                'logo' => $compound->logo
-                            ];
-                        }
-                        break;
-
-                    case 'stage':
-                        $stage = Stage::with('compound')
-                            ->find($favorite->favoritable_id);
-                        if ($stage) {
-                            $itemDetails = [
-                                'id' => $stage->id,
-                                'stage_name' => $stage->stage_name,
-                                'compound_name' => $stage->compound->name ?? null,
-                                'completion_progress' => $stage->completion_progress
-                            ];
-                        }
-                        break;
-                }
-
-                $favorite->item_details = $itemDetails;
-            });
+            $favorites = Favorite::where('user_id', $userId)
+                ->with(['unit.compound', 'compound'])
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return response()->json([
-                'data' => $favorites
+                'success' => true,
+                'message' => 'Favorites retrieved successfully',
+                'data' => [
+                    'favorites' => $favorites,
+                    'count' => $favorites->count()
+                ]
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to fetch favorites',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Failed to fetch favorites',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -110,60 +54,101 @@ class FavoriteController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            // In production, get user_id from authenticated user
-            $userId = $request->get('user_id');
+            // Get user_id from request parameter or authenticated user
+            $userId = $request->get('user_id', $request->user()->id);
 
-            if (!$userId) {
-                return response()->json([
-                    'error' => 'User ID is required'
-                ], 401);
-            }
-
+            // Validate - can have unit_id, compound_id, or both
             $request->validate([
-                'type' => 'required|in:unit,compound,stage',
-                'id' => 'required|integer'
+                'unit_id' => 'nullable|integer|exists:units,id',
+                'compound_id' => 'nullable|integer|exists:compounds,id'
             ]);
 
-            // Validate type and check if item exists
-            $table = $request->type === 'unit' ? Unit::class :
-                    ($request->type === 'compound' ? Compound::class : Stage::class);
-
-            $item = $table::find($request->id);
-            if (!$item) {
+            // Ensure at least one is provided
+            if (!$request->has('unit_id') && !$request->has('compound_id')) {
                 return response()->json([
-                    'error' => ucfirst($request->type) . ' not found'
-                ], 404);
+                    'success' => false,
+                    'message' => 'At least unit_id or compound_id is required'
+                ], 400);
             }
 
-            // Check if already favorited
-            $existing = Favorite::where([
-                'user_id' => $userId,
-                'favoritable_type' => $request->type,
-                'favoritable_id' => $request->id
-            ])->first();
+            // Check if unit or compound exists
+            if ($request->has('unit_id')) {
+                $unit = Unit::find($request->unit_id);
+                if (!$unit) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unit not found'
+                    ], 404);
+                }
+            }
+
+            if ($request->has('compound_id')) {
+                $compound = Compound::find($request->compound_id);
+                if (!$compound) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Compound not found'
+                    ], 404);
+                }
+            }
+
+            // Check if already favorited (exact combination of unit_id and compound_id)
+            $queryCheck = Favorite::where('user_id', $userId);
+
+            if ($request->has('unit_id')) {
+                $queryCheck->where('unit_id', $request->unit_id);
+            } else {
+                $queryCheck->whereNull('unit_id');
+            }
+
+            if ($request->has('compound_id')) {
+                $queryCheck->where('compound_id', $request->compound_id);
+            } else {
+                $queryCheck->whereNull('compound_id');
+            }
+
+            $existing = $queryCheck->first();
 
             if ($existing) {
                 return response()->json([
-                    'error' => 'Already in favorites'
+                    'success' => false,
+                    'message' => 'Already in favorites'
                 ], 409);
             }
 
             // Create favorite
             $favorite = Favorite::create([
                 'user_id' => $userId,
-                'favoritable_type' => $request->type,
-                'favoritable_id' => $request->id
+                'unit_id' => $request->unit_id ?? null,
+                'compound_id' => $request->compound_id ?? null
             ]);
 
+            // Load relationships
+            $favorite->load(['unit.compound', 'compound']);
+
+            // Determine message based on what was saved
+            $itemType = 'Item';
+            if ($request->has('unit_id') && $request->has('compound_id')) {
+                $itemType = 'Unit and Compound';
+            } elseif ($request->has('unit_id')) {
+                $itemType = 'Unit';
+            } elseif ($request->has('compound_id')) {
+                $itemType = 'Compound';
+            }
+
             return response()->json([
-                'message' => 'Added to favorites',
-                'favorite_id' => $favorite->id
+                'success' => true,
+                'message' => $itemType . ' added to favorites',
+                'data' => [
+                    'favorite' => $favorite
+                ]
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to add favorite',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Failed to add favorite',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -177,50 +162,61 @@ class FavoriteController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         try {
-            // In production, get user_id from authenticated user
-            $userId = $request->get('user_id');
+            // Get user_id from request parameter or authenticated user
+            $userId = $request->get('user_id', $request->user()->id);
 
-            if (!$userId) {
+            // Must have at least unit_id or compound_id
+            if (!$request->has('unit_id') && !$request->has('compound_id')) {
                 return response()->json([
-                    'error' => 'User ID is required'
-                ], 401);
-            }
-
-            $deleted = false;
-
-            // Delete by favorite_id
-            if ($request->has('favorite_id')) {
-                $deleted = Favorite::where('id', $request->favorite_id)
-                    ->where('user_id', $userId)
-                    ->delete();
-            }
-            // Delete by type + id
-            elseif ($request->has('type') && $request->has('id')) {
-                $deleted = Favorite::where([
-                    'user_id' => $userId,
-                    'favoritable_type' => $request->type,
-                    'favoritable_id' => $request->id
-                ])->delete();
-            } else {
-                return response()->json([
-                    'error' => 'Either favorite_id or type+id is required'
+                    'success' => false,
+                    'message' => 'At least unit_id or compound_id is required'
                 ], 400);
             }
 
+            // Build query matching exact combination
+            $queryDelete = Favorite::where('user_id', $userId);
+
+            if ($request->has('unit_id')) {
+                $queryDelete->where('unit_id', $request->unit_id);
+            } else {
+                $queryDelete->whereNull('unit_id');
+            }
+
+            if ($request->has('compound_id')) {
+                $queryDelete->where('compound_id', $request->compound_id);
+            } else {
+                $queryDelete->whereNull('compound_id');
+            }
+
+            $deleted = $queryDelete->delete();
+
             if (!$deleted) {
                 return response()->json([
-                    'error' => 'Favorite not found'
+                    'success' => false,
+                    'message' => 'Favorite not found'
                 ], 404);
             }
 
+            // Determine message based on what was deleted
+            $itemType = 'Item';
+            if ($request->has('unit_id') && $request->has('compound_id')) {
+                $itemType = 'Unit and Compound';
+            } elseif ($request->has('unit_id')) {
+                $itemType = 'Unit';
+            } elseif ($request->has('compound_id')) {
+                $itemType = 'Compound';
+            }
+
             return response()->json([
-                'message' => 'Removed from favorites'
+                'success' => true,
+                'message' => $itemType . ' removed from favorites'
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to remove favorite',
-                'message' => $e->getMessage()
+                'success' => false,
+                'message' => 'Failed to remove favorite',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

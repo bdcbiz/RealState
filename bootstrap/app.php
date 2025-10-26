@@ -19,9 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
 
-        // Apply localization, JSON encoding, and CORS to all API responses
+        // IMPORTANT: Apply custom CORS FIRST (prepend) to ensure headers are added before any other processing
+        $middleware->api(prepend: [
+            \App\Http\Middleware\Cors::class,
+        ]);
+
+        // Apply localization and JSON encoding after CORS
         $middleware->api(append: [
-            \Illuminate\Http\Middleware\HandleCors::class,
             \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\ForceJsonResponse::class,
         ]);
