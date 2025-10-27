@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\SalesAvailabilityExport;
 use App\Exports\UnitsAvailabilityExport;
 use App\Exports\MergedAvailabilityExport;
+use App\Exports\ComprehensiveDataExport;
 use App\Imports\MergedAvailabilityImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,6 +38,24 @@ class ExportController extends Controller
 
         // Use CSV format which is more memory efficient than XLSX
         return Excel::download(new MergedAvailabilityExport, 'merged_availability_' . date('Y-m-d_H-i-s') . '.csv');
+    }
+
+    /**
+     * Export Comprehensive Data (Units + Compounds + Companies) to Excel
+     */
+    public function exportComprehensiveData()
+    {
+        // Increase memory limit for large dataset (5467 units)
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', '300'); // 5 minutes
+
+        $filename = 'comprehensive_data_' . date('Y-m-d_His') . '.xlsx';
+
+        return Excel::download(
+            new ComprehensiveDataExport(),
+            $filename,
+            \Maatwebsite\Excel\Excel::XLSX
+        );
     }
 
     /**

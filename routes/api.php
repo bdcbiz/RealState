@@ -43,6 +43,10 @@ use App\Http\Controllers\HistoryController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// EMAIL VERIFICATION
+Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('/resend-verification-code', [AuthController::class, 'resendVerificationCode']);
+
 // Public access to companies and compounds for website
 Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{id}', [CompanyController::class, 'show']);

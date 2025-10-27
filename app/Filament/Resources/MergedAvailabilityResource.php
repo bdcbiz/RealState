@@ -287,13 +287,12 @@ class MergedAvailabilityResource extends Resource
                 Tables\Filters\SelectFilter::make('project')
                     ->label(__('merged_availability.filters.project'))
                     ->options(function () {
-                        return DB::table(DB::raw('(
-                            SELECT DISTINCT project FROM sales_availability WHERE project IS NOT NULL
-                            UNION
-                            SELECT DISTINCT project FROM units_availability WHERE project IS NOT NULL
-                        ) as projects'))
-                        ->pluck('project', 'project')
-                        ->toArray();
+                        return DB::table('sales_availability')
+                            ->distinct()
+                            ->whereNotNull('project')
+                            ->orderBy('project')
+                            ->pluck('project', 'project')
+                            ->toArray();
                     }),
             ])
             ->actions([
@@ -311,6 +310,12 @@ class MergedAvailabilityResource extends Resource
                     ->icon('heroicon-o-table-cells')
                     ->color('success')
                     ->url(fn (): string => route('export.merged-availability'))
+                    ->openUrlInNewTab(),
+                Action::make('exportComprehensiveData')
+                    ->label('Export All Data (Units + Compounds + Companies)')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning')
+                    ->url(fn (): string => route('export.comprehensive-data'))
                     ->openUrlInNewTab(),
             ])
             ->bulkActions([

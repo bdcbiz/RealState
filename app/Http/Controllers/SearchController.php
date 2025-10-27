@@ -86,7 +86,7 @@ class SearchController extends Controller
 
             // Search units
             if (!$type || $type === 'unit') {
-                $units = Unit::with(['compound.company'])
+                $units = Unit::with(['compound.company', 'compound.currentSale'])
                     ->where(function($query) use ($search) {
                         if ($search) {
                             $query->where('unit_name', 'LIKE', "%{$search}%")
@@ -100,29 +100,73 @@ class SearchController extends Controller
                     ->get();
 
                 foreach ($units as $unit) {
+                    // Calculate discounted price if compound has active sale
+                    $originalPrice = $unit->normal_price;
+                    $discountedPrice = null;
+                    $discountPercentage = null;
+                    $saleData = null;
+
+                    if (isset($unit->compound->currentSale) && $unit->compound->currentSale) {
+                        $sale = $unit->compound->currentSale;
+
+                        // Check if sale is active and within date range
+                        $now = now();
+                        $isActive = $sale->is_active &&
+                                    $now->greaterThanOrEqualTo($sale->start_date) &&
+                                    $now->lessThanOrEqualTo($sale->end_date);
+
+                        if ($isActive && $originalPrice) {
+                            $discountPercentage = $sale->discount_percentage;
+                            $discountedPrice = $originalPrice - ($originalPrice * $discountPercentage / 100);
+
+                            $saleData = [
+                                'id' => $sale->id,
+                                'sale_name' => $sale->sale_name,
+                                'discount_percentage' => $sale->discount_percentage,
+                            ];
+                        }
+                    }
+
+                    // Build compound data
+                    $compoundData = [
+                        'id' => $unit->compound->id ?? null,
+                        'name' => $unit->compound->project ?? null,
+                        'location' => $unit->compound->location ?? null,
+                        'images' => $unit->compound->images_urls ?? [],
+                    ];
+
+                    // Only add company if it exists
+                    if (isset($unit->compound->company) && $unit->compound->company) {
+                        $compoundData['company'] = [
+                            'id' => $unit->compound->company->id,
+                            'name' => $unit->compound->company->name,
+                            'logo' => $unit->compound->company->logo_url ?? null
+                        ];
+                    }
+
                     $results[] = [
                         'type' => 'unit',
                         'id' => $unit->id,
                         'name' => $unit->unit_name,
-                        'code' => $unit->unit_code,
-                        'unit_type' => $unit->unit_type,
+                        'code' => $unit->unit_code ?? $unit->code ?? null,
+                        'unit_type' => $unit->unit_type ?? $unit->usage_type,
                         'usage_type' => $unit->usage_type,
-                        'price' => $unit->base_price,
-                        'total_price' => $unit->total_price,
-                        'available' => (bool)$unit->is_sold == false,
+                        'original_price' => $originalPrice,
+                        'price' => $discountedPrice ?? $originalPrice,
+                        'discounted_price' => $discountedPrice,
+                        'discount_percentage' => $discountPercentage,
+                        'has_active_sale' => !is_null($saleData),
+                        'total_price' => $unit->total_pricing,
+                        'built_up_area' => $unit->built_up_area,
+                        'land_area' => $unit->land_area,
+                        'garden_area' => $unit->garden_area,
+                        'available' => (bool)!$unit->is_sold,
                         'is_sold' => (bool)$unit->is_sold,
                         'status' => $unit->status,
                         'number_of_beds' => $unit->number_of_beds,
-                        'compound' => [
-                            'id' => $unit->compound->id ?? null,
-                            'name' => $unit->compound->project ?? null,
-                            'location' => $unit->compound->location ?? null,
-                            'company' => [
-                                'id' => $unit->compound->company->id ?? null,
-                                'name' => $unit->compound->company->name ?? null,
-                                'logo' => $unit->compound->company->logo_url ?? null
-                            ]
-                        ]
+                        'images' => $unit->images_urls ?? [],
+                        'compound' => $compoundData,
+                        'sale' => $saleData
                     ];
                 }
             }

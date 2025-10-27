@@ -76,7 +76,40 @@ class HistoryController extends Controller
                 'metadata' => 'nullable|array'
             ]);
 
-            // Create history entry
+            // Check if this exact entry already exists (to avoid duplicates)
+            $query = UserHistory::where('user_id', $userId)
+                ->where('action_type', $validated['action_type']);
+
+            // Add specific filters based on action type
+            if ($validated['action_type'] === 'view_unit' && isset($validated['unit_id'])) {
+                $query->where('unit_id', $validated['unit_id']);
+            } elseif ($validated['action_type'] === 'view_compound' && isset($validated['compound_id'])) {
+                $query->where('compound_id', $validated['compound_id']);
+            } elseif ($validated['action_type'] === 'search' && isset($validated['search_query'])) {
+                $query->where('search_query', $validated['search_query']);
+            }
+
+            $existingHistory = $query->first();
+
+            if ($existingHistory) {
+                // Update timestamp to move it to the top (most recent)
+                $existingHistory->touch(); // Updates updated_at
+                $existingHistory->created_at = now(); // Update created_at to make it appear as new
+                $existingHistory->save();
+
+                // Load relationships
+                $existingHistory->load(['unit.compound', 'compound']);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'History entry updated',
+                    'data' => [
+                        'history' => $existingHistory
+                    ]
+                ], 200);
+            }
+
+            // Create new history entry if doesn't exist
             $history = UserHistory::create([
                 'user_id' => $userId,
                 'action_type' => $validated['action_type'],

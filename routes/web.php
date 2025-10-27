@@ -22,6 +22,7 @@ Route::prefix('export')->name('export.')->group(function () {
     Route::get('/sales-availability', [ExportController::class, 'exportSalesAvailability'])->name('sales-availability');
     Route::get('/units-availability', [ExportController::class, 'exportUnitsAvailability'])->name('units-availability');
     Route::get('/merged-availability', [ExportController::class, 'exportMergedAvailability'])->name('merged-availability');
+    Route::get('/comprehensive-data', [ExportController::class, 'exportComprehensiveData'])->name('comprehensive-data');
 });
 
 // Excel Import Routes

@@ -118,17 +118,7 @@ class UnitsAvailabilityResource extends Resource
                     ->label(__('units_availability.fields.updated_at')),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('project')
-                    ->searchable()
-                    ->preload()
-                    ->label(__('units_availability.filters.project'))
-                    ->options(fn () => UnitsAvailability::query()
-                        ->distinct()
-                        ->whereNotNull('project')
-                        ->orderBy('project')
-                        ->limit(100)
-                        ->pluck('project', 'project')
-                        ->toArray()),
+                // Removed project filter - column doesn't exist in units_availability table
                 Tables\Filters\SelectFilter::make('usage_type')
                     ->searchable()
                     ->preload()

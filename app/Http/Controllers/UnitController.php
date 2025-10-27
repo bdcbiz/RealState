@@ -17,7 +17,7 @@ class UnitController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $query = Unit::with(['compound.company', 'stage']);
+            $query = Unit::with(['compound.company', 'compound.currentSale', 'stage']);
 
             // Apply filters
             $this->applyFilters($query, $request);
@@ -66,7 +66,7 @@ class UnitController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-            $unit = Unit::with(['compound.company', 'stage'])->find($id);
+            $unit = Unit::with(['compound.company', 'compound.currentSale', 'stage'])->find($id);
 
             if (!$unit) {
                 return response()->json([
@@ -102,7 +102,7 @@ class UnitController extends Controller
             $page = $request->get('page', 1);
             $limit = $request->get('limit', 20);
 
-            $query = Unit::with(['compound.company']);
+            $query = Unit::with(['compound.company', 'compound.currentSale']);
 
             // Text filters
             if (!empty($filters['usage_type'])) {
@@ -300,6 +300,62 @@ class UnitController extends Controller
             }
         }
 
+        // Build compound object
+        $compoundData = null;
+        if (isset($unit->compound) && $unit->compound) {
+            $compoundData = [
+                'id' => $unit->compound->id,
+                'name' => $unit->compound->name ?? $unit->compound->project ?? null,
+                'project' => $unit->compound->project ?? null,
+                'location' => $unit->compound->location ?? null,
+                'status' => $unit->compound->status ?? null,
+                'completion_progress' => $unit->compound->completion_progress ?? null,
+                'images' => $unit->compound->images_urls ?? [],
+            ];
+        }
+
+        // Build company object
+        $companyData = null;
+        if (isset($unit->compound->company) && $unit->compound->company) {
+            $companyData = [
+                'id' => $unit->compound->company->id,
+                'name' => $unit->compound->company->name,
+                'logo' => $unit->compound->company->logo_url ?? null,
+                'email' => $unit->compound->company->email ?? null,
+            ];
+        }
+
+        // Calculate discounted price if compound has active sale
+        $originalPrice = $unit->normal_price;
+        $discountedPrice = null;
+        $discountPercentage = null;
+        $saleData = null;
+
+        if (isset($unit->compound->currentSale) && $unit->compound->currentSale) {
+            $sale = $unit->compound->currentSale;
+
+            // Check if sale is active and within date range
+            $now = now();
+            $isActive = $sale->is_active &&
+                        $now->greaterThanOrEqualTo($sale->start_date) &&
+                        $now->lessThanOrEqualTo($sale->end_date);
+
+            if ($isActive && $originalPrice) {
+                $discountPercentage = $sale->discount_percentage;
+                $discountedPrice = $originalPrice - ($originalPrice * $discountPercentage / 100);
+
+                $saleData = [
+                    'id' => $sale->id,
+                    'sale_name' => $sale->sale_name,
+                    'description' => $sale->description,
+                    'discount_percentage' => $sale->discount_percentage,
+                    'start_date' => $sale->start_date->format('Y-m-d'),
+                    'end_date' => $sale->end_date->format('Y-m-d'),
+                    'is_active' => true,
+                ];
+            }
+        }
+
         return [
             'id' => $unit->id,
             'compound_id' => $unit->compound_id,
@@ -309,26 +365,34 @@ class UnitController extends Controller
             'company_name' => $unit->compound->company->name ?? null,
             'company_logo' => $unit->compound->company->logo_url ?? null,
             'unit_name' => $unit->unit_name,
-            'unit_code' => $unit->unit_code,
-            'code' => $unit->code,
-            'unit_type' => $unit->unit_type,
+            'unit_code' => $unit->unit_code ?? $unit->code ?? null,
+            'code' => $unit->code ?? $unit->unit_code ?? null,
+            'unit_type' => $unit->unit_type ?? $unit->usage_type,
             'usage_type' => $unit->usage_type,
             'status' => $unit->status,
             'number_of_beds' => $unit->number_of_beds,
             'floor_number' => $unit->floor_number,
-            'normal_price' => $unit->normal_price,
+            'original_price' => $originalPrice,
+            'normal_price' => $discountedPrice ?? $originalPrice, // Show discounted price if sale exists
+            'discounted_price' => $discountedPrice,
+            'discount_percentage' => $discountPercentage,
+            'has_active_sale' => !is_null($saleData),
             'total_pricing' => $unit->total_pricing,
             'total_area' => $totalArea,
             'available' => (bool)!$unit->is_sold,
             'is_sold' => (bool)$unit->is_sold,
-            'images' => $unit->images_urls,
+            'images' => $unit->images_urls ?? [],
             'created_at' => $unit->created_at,
             'updated_at' => $unit->updated_at,
             // Localized fields
             'unit_name_localized' => $unit->unit_name_localized ?? $unit->unit_name,
-            'unit_type_localized' => $unit->unit_type_localized ?? $unit->unit_type,
+            'unit_type_localized' => $unit->unit_type_localized ?? $unit->unit_type ?? $unit->usage_type,
             'usage_type_localized' => $unit->usage_type_localized ?? $unit->usage_type,
             'status_localized' => $unit->status_localized ?? $unit->status,
+            // Structured objects
+            'compound' => $compoundData,
+            'company' => $companyData,
+            'sale' => $saleData,
         ];
     }
 }

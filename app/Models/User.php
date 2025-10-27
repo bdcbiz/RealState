@@ -33,6 +33,8 @@ class User extends Authenticatable implements FilamentUser
         'google_id',
         'photo_url',
         'login_method',
+        'verification_code',
+        'verification_code_expires_at',
     ];
 
     /**

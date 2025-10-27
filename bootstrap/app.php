@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
+        // Disabled statefulApi() - Not needed for mobile API with Bearer tokens
+        // statefulApi() enables CSRF protection which causes 419 errors for external requests
+        // $middleware->statefulApi();
 
         // Use custom Authenticate middleware for API
         $middleware->alias([

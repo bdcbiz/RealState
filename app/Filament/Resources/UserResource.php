@@ -151,6 +151,23 @@ class UserResource extends Resource
                 Tables\Columns\ToggleColumn::make('is_verified')
                     ->label(__('user.fields.verified'))
                     ->sortable(),
+                Tables\Columns\IconColumn::make('email_verified_at')
+                    ->label('Email Sent')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->sortable()
+                    ->tooltip(fn ($record) => $record->email_verified_at
+                        ? 'Verified at: ' . $record->email_verified_at->format('Y-m-d H:i')
+                        : 'Not verified yet'),
+                Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label('Verified Date')
+                    ->dateTime('Y-m-d H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->placeholder('Not verified'),
                 Tables\Columns\ToggleColumn::make('is_banned')
                     ->label(__('user.fields.banned'))
                     ->sortable(),
