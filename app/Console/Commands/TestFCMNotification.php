@@ -78,36 +78,88 @@ class TestFCMNotification extends Command
 
         $this->newLine();
 
-        // 4. Test sending notification
+        // 4. Print Firebase Project Details
+        try {
+            $credentials = json_decode(file_get_contents($fullPath), true);
+            $this->info("🔑 Firebase Project Details:");
+            $this->line("   Project ID: " . ($credentials['project_id'] ?? 'N/A'));
+            $this->line("   Client Email: " . ($credentials['client_email'] ?? 'N/A'));
+            $this->line("   Firebase Console: https://console.firebase.google.com/project/{$credentials['project_id']}/notification");
+        } catch (\Exception $e) {
+            $this->warn("   Could not read project details");
+        }
+
+        $this->newLine();
+
+        // 5. Test sending notification with detailed logging
         if ($this->option('token')) {
             $testToken = $this->option('token');
             $this->info("🧪 Testing notification to specific token...");
+            $this->line("   Token: " . substr($testToken, 0, 50) . "...");
+            $this->newLine();
 
             try {
-                // Test with a simple notification
-                $result = $fcmService->sendToToken(
+                $this->info("📤 Step 1: Preparing notification payload...");
+                $title = "Test Notification";
+                $body = "This is a test notification from " . config('app.name') . " at " . now()->format('Y-m-d H:i:s');
+                $data = [
+                    'type' => 'test',
+                    'timestamp' => now()->toDateTimeString(),
+                    'test_id' => uniqid(),
+                ];
+
+                $this->line("   Title: {$title}");
+                $this->line("   Body: {$body}");
+                $this->line("   Data: " . json_encode($data));
+                $this->newLine();
+
+                $this->info("📤 Step 2: Sending to Firebase...");
+                $result = $fcmService->sendToUser(
                     $testToken,
-                    "Test Notification",
-                    "This is a test notification from " . config('app.name'),
-                    ['type' => 'test', 'timestamp' => now()->toDateTimeString()]
+                    $title,
+                    $body,
+                    $data
                 );
 
-                $this->info("✅ Test notification sent successfully!");
-                $this->line("   Result: " . json_encode($result));
+                $this->newLine();
+                if ($result) {
+                    $this->info("✅ Step 3: Notification sent successfully!");
+                    $this->line("   Check the mobile device for the notification.");
+                    $this->line("   Check Laravel logs at: storage/logs/laravel.log");
+                } else {
+                    $this->error("❌ Step 3: Failed to send notification");
+                    $this->line("   Check Laravel logs for details: storage/logs/laravel.log");
+                }
             } catch (\Exception $e) {
                 $this->error("❌ Failed to send test notification: " . $e->getMessage());
+                $this->line("   Stack trace logged to: storage/logs/laravel.log");
             }
         } elseif ($usersWithTokens->count() > 0) {
             if ($this->confirm('Do you want to send a test notification to all users?', false)) {
+                $this->newLine();
+                $this->info("📤 Sending notifications to {$usersWithTokens->count()} users...");
+
                 try {
-                    $fcmService->sendToAllUsers(
-                        "Test Notification",
-                        "This is a test notification from admin panel",
-                        ['type' => 'test', 'timestamp' => now()->toDateTimeString()]
-                    );
-                    $this->info("✅ Test notification sent to all users!");
+                    foreach ($usersWithTokens as $user) {
+                        $this->line("   → {$user->name} ({$user->email})");
+                        $result = $fcmService->sendToUser(
+                            $user->fcm_token,
+                            "Test Notification",
+                            "This is a test notification from admin panel at " . now()->format('Y-m-d H:i:s'),
+                            ['type' => 'test', 'timestamp' => now()->toDateTimeString()]
+                        );
+
+                        if ($result) {
+                            $this->info("     ✅ Sent");
+                        } else {
+                            $this->error("     ❌ Failed");
+                        }
+                    }
+                    $this->newLine();
+                    $this->info("✅ Test notifications sent!");
+                    $this->line("   Check Laravel logs at: storage/logs/laravel.log");
                 } catch (\Exception $e) {
-                    $this->error("❌ Failed to send notification: " . $e->getMessage());
+                    $this->error("❌ Failed to send notifications: " . $e->getMessage());
                 }
             }
         }

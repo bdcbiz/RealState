@@ -71,7 +71,14 @@ class FCMNotificationService
     public function sendToUser($token, $title, $body, $data = [])
     {
         try {
-            $message = CloudMessage::fromArray([
+            Log::info("═══════════════════════════════════════");
+            Log::info("📤 FCM: Starting notification send");
+            Log::info("   Token: " . substr($token, 0, 50) . "...");
+            Log::info("   Title: {$title}");
+            Log::info("   Body: {$body}");
+            Log::info("   Data: " . json_encode($data));
+
+            $messageArray = [
                 'token' => $token,
                 'notification' => [
                     'title' => $title,
@@ -80,19 +87,46 @@ class FCMNotificationService
                 'data' => $data,
                 'android' => [
                     'priority' => 'high',
+                    'notification' => [
+                        'sound' => 'default',
+                        'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
+                    ],
                 ],
                 'apns' => [
                     'headers' => [
                         'apns-priority' => '10',
                     ],
+                    'payload' => [
+                        'aps' => [
+                            'sound' => 'default',
+                            'badge' => 1,
+                        ],
+                    ],
                 ],
-            ]);
+            ];
 
-            $this->messaging->send($message);
-            Log::info("Notification sent to user token: {$token}");
+            Log::info("📦 FCM: Message payload prepared");
+            Log::info("   Payload: " . json_encode($messageArray));
+
+            $message = CloudMessage::fromArray($messageArray);
+
+            Log::info("🚀 FCM: Sending to Firebase Cloud Messaging...");
+            $response = $this->messaging->send($message);
+
+            Log::info("✅ FCM: Notification sent successfully!");
+            Log::info("   Response: " . json_encode($response));
+            Log::info("═══════════════════════════════════════");
+
             return true;
         } catch (\Exception $e) {
-            Log::error("Failed to send notification to token {$token}: " . $e->getMessage());
+            Log::error("═══════════════════════════════════════");
+            Log::error("❌ FCM: Failed to send notification");
+            Log::error("   Token: " . substr($token, 0, 50) . "...");
+            Log::error("   Error Type: " . get_class($e));
+            Log::error("   Error Message: " . $e->getMessage());
+            Log::error("   Error Code: " . $e->getCode());
+            Log::error("   Stack Trace: " . $e->getTraceAsString());
+            Log::error("═══════════════════════════════════════");
             return false;
         }
     }
