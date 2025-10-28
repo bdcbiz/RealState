@@ -93,6 +93,70 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Get user subscriptions
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    /**
+     * Get active subscription
+     */
+    public function activeSubscription()
+    {
+        return $this->hasOne(UserSubscription::class)
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->latest();
+    }
+
+    /**
+     * Check if user has an active subscription
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription()->exists();
+    }
+
+    /**
+     * Get current active subscription or null
+     */
+    public function getCurrentSubscription(): ?UserSubscription
+    {
+        return $this->activeSubscription;
+    }
+
+    /**
+     * Check if user can search
+     */
+    public function canSearch(): bool
+    {
+        $subscription = $this->getCurrentSubscription();
+
+        if (!$subscription) {
+            return false;
+        }
+
+        return $subscription->canSearch();
+    }
+
+    /**
+     * Increment user's search count
+     */
+    public function incrementSearchCount(): void
+    {
+        $subscription = $this->getCurrentSubscription();
+
+        if ($subscription) {
+            $subscription->incrementSearch();
+        }
+    }
+
+    /**
      * Determine if the user can access the Filament admin panel.
      *
      * By default, all authenticated users can access the panel.

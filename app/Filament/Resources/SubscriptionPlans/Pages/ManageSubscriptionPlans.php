@@ -112,6 +112,18 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                         ->numeric()
                         ->default(1)
                         ->required(),
+                    TextInput::make('search_limit')
+                        ->label('عدد محاولات البحث')
+                        ->numeric()
+                        ->default(-1)
+                        ->helperText('-1 = غير محدود')
+                        ->required(),
+                    TextInput::make('validity_days')
+                        ->label('مدة الصلاحية (أيام)')
+                        ->numeric()
+                        ->default(-1)
+                        ->helperText('-1 = غير محدود')
+                        ->required(),
                     TextInput::make('icon')
                         ->label('الأيقونة')
                         ->placeholder('heroicon-o-star'),
@@ -250,6 +262,14 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
             TextColumn::make('monthly_price')->label('السعر الشهري')->money('EGP')->sortable(),
             TextColumn::make('yearly_price')->label('السعر السنوي')->money('EGP')->sortable(),
             TextColumn::make('max_users')->label('عدد المستخدمين')->sortable(),
+            TextColumn::make('search_limit')
+                ->label('محاولات البحث')
+                ->sortable()
+                ->formatStateUsing(fn ($state) => $state == -1 ? 'غير محدود' : $state),
+            TextColumn::make('validity_days')
+                ->label('مدة الصلاحية')
+                ->sortable()
+                ->formatStateUsing(fn ($state) => $state == -1 ? 'غير محدود' : $state . ' يوم'),
             IconColumn::make('is_active')
                 ->label('نشط')
                 ->boolean(),
@@ -301,6 +321,8 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                 TextInput::make('monthly_price')->label('السعر الشهري')->numeric()->prefix('جنيه')->required(),
                 TextInput::make('yearly_price')->label('السعر السنوي')->numeric()->prefix('جنيه')->required(),
                 TextInput::make('max_users')->label('عدد المستخدمين')->numeric()->required(),
+                TextInput::make('search_limit')->label('عدد محاولات البحث')->numeric()->helperText('-1 = غير محدود')->required(),
+                TextInput::make('validity_days')->label('مدة الصلاحية (أيام)')->numeric()->helperText('-1 = غير محدود')->required(),
                 TextInput::make('icon')->label('الأيقونة'),
                 ColorPicker::make('color')->label('اللون'),
                 TextInput::make('badge')->label('شارة بالعربية'),

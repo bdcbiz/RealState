@@ -17,6 +17,8 @@ class SubscriptionPlan extends Model
         'monthly_price',
         'yearly_price',
         'max_users',
+        'search_limit',
+        'validity_days',
         'icon',
         'color',
         'badge',
@@ -31,6 +33,8 @@ class SubscriptionPlan extends Model
         'yearly_price' => 'decimal:2',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'search_limit' => 'integer',
+        'validity_days' => 'integer',
     ];
 
     public function features(): BelongsToMany
@@ -44,5 +48,28 @@ class SubscriptionPlan extends Model
     public function pricingTiers(): HasMany
     {
         return $this->hasMany(SubscriptionPricingTier::class)->orderBy('sort_order');
+    }
+
+    public function userSubscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    /**
+     * Check if this is a free plan
+     */
+    public function isFree(): bool
+    {
+        return $this->monthly_price == 0 && $this->yearly_price == 0;
+    }
+
+    /**
+     * Get the free plan
+     */
+    public static function getFreePlan(): ?self
+    {
+        return self::where('slug', 'free')
+            ->where('is_active', true)
+            ->first();
     }
 }
