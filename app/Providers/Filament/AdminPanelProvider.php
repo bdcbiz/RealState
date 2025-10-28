@@ -23,16 +23,16 @@ class AdminPanelProvider extends PanelProvider
 {
     public function boot(): void
     {
-        // Temporarily disabled - package not installed
-        // LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
-        //     $switch
-        //         ->locales(['ar', 'en'])
-        //         ->labels([
-        //             'ar' => 'العربية',
-        //             'en' => 'English',
-        //         ])
-        //         ->circular();
-        // });
+        // Language Switch Configuration
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+            $switch
+                ->locales(['ar', 'en'])
+                ->labels([
+                    'ar' => 'العربية',
+                    'en' => 'English',
+                ])
+                ->circular();
+        });
     }
 
     public function panel(Panel $panel): Panel
