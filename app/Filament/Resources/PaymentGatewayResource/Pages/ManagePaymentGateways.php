@@ -28,7 +28,7 @@ class ManagePaymentGateways extends Page implements HasForms
 
     protected static ?string $title = 'إدارة بوابات الدفع';
 
-    public string $activeTab = 'stripe';
+    public string $activeTab = 'paysky';
 
     public ?array $stripeData = [];
     public ?array $payskyData = [];
@@ -486,5 +486,42 @@ class ManagePaymentGateways extends Page implements HasForms
             ->send();
 
         $this->loadGatewaysData();
+    }
+
+    // ============= PUBLIC SAVE METHODS (called from Blade) =============
+
+    public function savePaysky(): void
+    {
+        $this->saveGateway('paysky', 'PaySky', $this->payskyForm->getState());
+    }
+
+    public function saveEasykash(): void
+    {
+        $this->saveGateway('easykash', 'EasyKash', $this->easykashForm->getState());
+    }
+
+    public function saveAfs(): void
+    {
+        $this->saveGateway('afs', 'AFS Mastercard', $this->afsForm->getState());
+    }
+
+    public function savePaymob(): void
+    {
+        $this->saveGateway('paymob', 'PayMob', $this->paymobForm->getState());
+    }
+
+    public function saveFawry(): void
+    {
+        $this->saveGateway('fawry', 'Fawry', $this->fawryForm->getState());
+    }
+
+    public function saveGeidea(): void
+    {
+        $this->saveGateway('geidea', 'Geidea', $this->geideaForm->getState());
+    }
+
+    public function saveStripe(): void
+    {
+        $this->saveGateway('stripe', 'Stripe', $this->stripeForm->getState());
     }
 }
