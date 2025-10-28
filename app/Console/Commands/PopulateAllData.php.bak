@@ -1,0 +1,132 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\AllData;
+use App\Models\Unit;
+use Illuminate\Console\Command;
+
+class PopulateAllData extends Command
+{
+    protected $signature = 'populate:all-data {--fresh}';
+    protected $description = 'Populate all_data table with data from units, compounds, and companies';
+
+    public function handle()
+    {
+        if ($this->option('fresh')) {
+            $this->info('Truncating all_data table...');
+            AllData::truncate();
+        }
+
+        $this->info('Starting to populate all_data table...');
+        
+        $units = Unit::with(['compound.company'])->get();
+        $bar = $this->output->createProgressBar($units->count());
+        $bar->start();
+
+        $inserted = 0;
+
+        foreach ($units as $unit) {
+            try {
+                $company = $unit->compound?->company;
+                
+                AllData::create([
+                    // Unit Information
+                    'unit_code' => $unit->unit_code,
+                    'unit_name' => $unit->unit_name,
+                    'unit_type' => $unit->unit_type,
+                    'usage_type' => $unit->usage_type,
+                    'category' => $unit->category,
+                    'floor' => $unit->floor,
+                    'view' => $unit->view,
+                    'bedrooms' => $unit->bedrooms,
+                    'bathrooms' => $unit->bathrooms,
+                    'living_rooms' => $unit->living_rooms,
+                    
+                    // Areas
+                    'built_up_area' => $unit->built_up_area,
+                    'land_area' => $unit->land_area,
+                    'garden_area' => $unit->garden_area,
+                    'roof_area' => $unit->roof_area,
+                    'terrace_area' => $unit->terrace_area,
+                    'basement_area' => $unit->basement_area,
+                    'garage_area' => $unit->garage_area,
+                    'total_area' => $unit->total_area,
+                    
+                    // Pricing
+                    'normal_price' => $unit->normal_price,
+                    'cash_price' => $unit->cash_price,
+                    'price_per_meter' => $unit->price_per_meter,
+                    'down_payment' => $unit->down_payment,
+                    'monthly_installment' => $unit->monthly_installment,
+                    'over_years' => $unit->over_years,
+                    
+                    // Finishing
+                    'finishing_type' => $unit->finishing_type,
+                    'finishing_specs' => null,
+                    'finishing_price' => $unit->finishing_price,
+                    
+                    // Status & Dates
+                    'status' => $unit->status,
+                    'availability' => $unit->availability,
+                    'is_featured' => $unit->is_featured ?? false,
+                    'is_available' => $unit->is_available ?? true,
+                    'delivery_date' => $unit->delivery_date,
+                    'delivered_at' => $unit->delivered_at,
+                    'planned_delivery_date' => $unit->planned_delivery_date,
+                    'actual_delivery_date' => $unit->actual_delivery_date,
+                    'completion_progress' => $unit->completion_progress,
+                    
+                    // Unit Details
+                    'model' => $unit->model,
+                    'phase' => $unit->phase,
+                    'building_number' => $unit->building_number,
+                    'unit_number' => $unit->unit_number,
+                    'description' => $unit->description,
+                    'description_ar' => $unit->description_ar,
+                    'features' => $unit->features,
+                    'amenities' => $unit->amenities,
+                    'unit_images' => $unit->images,
+                    'floor_plan_image' => $unit->floor_plan_image,
+                    
+                    // Compound/Project Information
+                    'project_name' => $unit->compound?->project,
+                    'project_name_ar' => $unit->compound?->name_ar,
+                    'compound_location' => $unit->compound?->location,
+                    'compound_city' => $unit->compound?->city,
+                    'compound_area' => $unit->compound?->area,
+                    'compound_description' => $unit->compound?->description,
+                    'compound_description_ar' => $unit->compound?->description_ar,
+                    'compound_latitude' => $unit->compound?->latitude,
+                    'compound_longitude' => $unit->compound?->longitude,
+                    'master_plan_image' => $unit->compound?->master_plan_image,
+                    'compound_images' => $unit->compound?->images,
+                    
+                    // Company Information
+                    'company_name' => $company?->name,
+                    'company_name_ar' => $company?->name_ar,
+                    'company_email' => $company?->email,
+                    'company_phone' => $company?->phone,
+                    'company_website' => $company?->website,
+                    'company_address' => $company?->address,
+                    
+                    // Sales Info
+                    'sales_id' => $unit->sales_id,
+                    'buyer_id' => $unit->buyer_id,
+                    'discount' => $unit->discount,
+                    'total_price_after_discount' => $unit->total_price_after_discount,
+                ]);
+
+                $inserted++;
+            } catch (\Exception $e) {
+                $this->error("Error inserting unit {$unit->id}: " . $e->getMessage());
+            }
+
+            $bar->advance();
+        }
+
+        $bar->finish();
+        $this->newLine(2);
+        $this->info("✓ Successfully inserted {$inserted} records into all_data table");
+    }
+}

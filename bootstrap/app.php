@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Use custom Authenticate middleware for API
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
+            'subscription' => \App\Http\Middleware\CheckSubscription::class,
         ]);
 
         // IMPORTANT: Apply custom CORS FIRST (prepend) to ensure headers are added before any other processing

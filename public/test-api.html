@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Login Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 API Login Test - Real Estate API</h1>
+        <p>This page tests the login endpoint to diagnose Flutter Web connection issues.</p>
+
+        <!-- Server Status -->
+        <div class="test-section">
+            <h3>📡 Server Status</h3>
+            <button onclick="checkServerStatus()">Check Server</button>
+            <div id="server-status"></div>
+        </div>
+
+        <!-- CORS Test -->
+        <div class="test-section">
+            <h3>🌐 CORS Configuration Test</h3>
+            <button onclick="testCORS()">Test CORS Headers</button>
+            <div id="cors-result"></div>
+        </div>
+
+        <!-- Login Test -->
+        <div class="test-section">
+            <h3>🔑 Login Endpoint Test</h3>
+            <input type="email" id="email" placeholder="Email" value="admin@example.com">
+            <input type="password" id="password" placeholder="Password" value="password123">
+            <button onclick="testLogin()">Test Login</button>
+            <div id="login-result"></div>
+        </div>
+
+        <!-- Network Info -->
+        <div class="test-section">
+            <h3>ℹ️ Network Information</h3>
+            <div id="network-info" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://aqar.bdcbiz.com/api';
+
+        // Display network information
+        function displayNetworkInfo() {
+            const info = {
+                'Current URL': window.location.href,
+                'Protocol': window.location.protocol,
+                'User Agent': navigator.userAgent,
+                'Online': navigator.onLine,
+                'API Base URL': API_BASE
+            };
+            document.getElementById('network-info').textContent = JSON.stringify(info, null, 2);
+        }
+
+        // Check server status
+        async function checkServerStatus() {
+            const resultDiv = document.getElementById('server-status');
+            resultDiv.innerHTML = '<p>⏳ Checking server...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/sales?limit=1`);
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <strong>✅ Server is reachable!</strong><br>
+                        Status: ${response.status} ${response.statusText}<br>
+                        Response time: Fast<br>
+                        Sample data received: ${data.success ? 'Yes' : 'No'}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Server Error:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test CORS
+        async function testCORS() {
+            const resultDiv = document.getElementById('cors-result');
+            resultDiv.innerHTML = '<p>⏳ Testing CORS...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'content-type'
+                    }
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+
+                const allPresent = Object.values(corsHeaders).every(h => h !== null);
+
+                resultDiv.innerHTML = `
+                    <div class="result ${allPresent ? 'success' : 'error'}">
+                        <strong>${allPresent ? '✅' : '❌'} CORS Headers:</strong><br>
+                        <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        <strong>Status:</strong> ${response.status} ${response.statusText}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ CORS Test Failed:</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test login
+        async function testLogin() {
+            const resultDiv = document.getElementById('login-result');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            resultDiv.innerHTML = '<p>⏳ Testing login...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Login Successful!</strong><br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <strong>❌ Login Failed:</strong><br>
+                            Status: ${response.status}<br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <br>
+                            <small>Note: This is expected if credentials are incorrect. The important thing is that the server responded.</small>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Request Failed:</strong><br>
+                        Error: ${error.message}<br>
+                        <br>
+                        <strong>This is the same error Flutter Web is experiencing!</strong><br>
+                        Possible causes:<br>
+                        • Network connectivity issue<br>
+                        • Firewall blocking the request<br>
+                        • Browser extension blocking request<br>
+                        • Invalid SSL certificate (though we verified it is valid)
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        displayNetworkInfo();
+    </script>
+</body>
+</html>

@@ -98,6 +98,7 @@ class UnitController extends Controller
     public function filter(Request $request): JsonResponse
     {
         try {
+            $user = $request->user();
             $filters = $request->all();
             $page = $request->get('page', 1);
             $limit = $request->get('limit', 20);
@@ -196,6 +197,26 @@ class UnitController extends Controller
                 return !in_array($key, ['page', 'limit']);
             }, ARRAY_FILTER_USE_KEY));
 
+            // Increment search count for the user
+            if ($user && $user->role !== 'admin') {
+                $user->incrementSearchCount();
+            }
+
+            // Get subscription info
+            $subscriptionInfo = null;
+            if ($user) {
+                $subscription = $user->getCurrentSubscription();
+                if ($subscription) {
+                    $subscriptionInfo = [
+                        'plan_name' => $subscription->subscriptionPlan->name,
+                        'searches_used' => $subscription->searches_used,
+                        'search_limit' => $subscription->subscriptionPlan->search_limit,
+                        'remaining_searches' => $subscription->getRemainingSearches(),
+                        'expires_at' => $subscription->expires_at?->format('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'total_units' => $totalUnits,
@@ -203,7 +224,8 @@ class UnitController extends Controller
                 'limit' => (int)$limit,
                 'total_pages' => ceil($totalUnits / $limit),
                 'filters_applied' => $appliedFilters,
-                'units' => $processedUnits
+                'units' => $processedUnits,
+                'subscription' => $subscriptionInfo
             ], 200);
 
         } catch (\Exception $e) {

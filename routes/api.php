@@ -72,8 +72,12 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    // SEARCH
-    Route::get('/search', [SearchController::class, 'search']);
+    // SEARCH (requires subscription)
+    Route::middleware('subscription')->group(function () {
+        Route::get('/search', [SearchController::class, 'search']);
+        Route::post('/filter-units', [UnitController::class, 'filter']);
+        Route::get('/filter-units', [UnitController::class, 'filter']);
+    });
 
     // COMPANIES (authenticated)
     Route::get('/companies-with-sales', [SalesController::class, 'getCompaniesWithSales']);
@@ -81,8 +85,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // UNITS
     Route::get('/units', [UnitController::class, 'index']);
     Route::get('/units/{id}', [UnitController::class, 'show']);
-    Route::post('/filter-units', [UnitController::class, 'filter']);
-    Route::get('/filter-units', [UnitController::class, 'filter']);
 
     // STAGES
     Route::get('/stages', [StageController::class, 'index']);
