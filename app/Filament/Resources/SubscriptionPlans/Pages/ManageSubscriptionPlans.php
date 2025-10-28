@@ -100,12 +100,12 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                     TextInput::make('monthly_price')
                         ->label('السعر الشهري')
                         ->numeric()
-                        ->prefix('ريال')
+                        ->prefix('جنيه')
                         ->required(),
                     TextInput::make('yearly_price')
                         ->label('السعر السنوي')
                         ->numeric()
-                        ->prefix('ريال')
+                        ->prefix('جنيه')
                         ->required(),
                     TextInput::make('max_users')
                         ->label('عدد المستخدمين المسموح')
@@ -223,7 +223,7 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                     TextInput::make('fixed_fee')
                         ->label('الرسوم الثابتة')
                         ->numeric()
-                        ->prefix('ريال')
+                        ->prefix('جنيه')
                         ->required(),
                     TextInput::make('sort_order')
                         ->label('الترتيب')
@@ -247,8 +247,8 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
             TextColumn::make('name')->label('الاسم')->searchable()->sortable(),
             TextColumn::make('name_en')->label('الاسم الإنجليزي')->searchable()->sortable(),
             TextColumn::make('slug')->label('المعرف')->searchable()->badge(),
-            TextColumn::make('monthly_price')->label('السعر الشهري')->money('SAR')->sortable(),
-            TextColumn::make('yearly_price')->label('السعر السنوي')->money('SAR')->sortable(),
+            TextColumn::make('monthly_price')->label('السعر الشهري')->money('EGP')->sortable(),
+            TextColumn::make('yearly_price')->label('السعر السنوي')->money('EGP')->sortable(),
             TextColumn::make('max_users')->label('عدد المستخدمين')->sortable(),
             IconColumn::make('is_active')
                 ->label('نشط')
@@ -284,7 +284,7 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
             TextColumn::make('type')->label('النوع')->badge()->searchable(),
             TextColumn::make('name')->label('الاسم')->searchable()->sortable(),
             TextColumn::make('percentage')->label('النسبة %')->sortable(),
-            TextColumn::make('fixed_fee')->label('الرسوم الثابتة')->money('SAR')->sortable(),
+            TextColumn::make('fixed_fee')->label('الرسوم الثابتة')->money('EGP')->sortable(),
             TextColumn::make('sort_order')->label('الترتيب')->sortable(),
         ];
     }
@@ -298,8 +298,8 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                 TextInput::make('slug')->label('المعرف الفريد')->required(),
                 Textarea::make('description')->label('الوصف بالعربية')->rows(3),
                 Textarea::make('description_en')->label('الوصف بالإنجليزية')->rows(3),
-                TextInput::make('monthly_price')->label('السعر الشهري')->numeric()->prefix('ريال')->required(),
-                TextInput::make('yearly_price')->label('السعر السنوي')->numeric()->prefix('ريال')->required(),
+                TextInput::make('monthly_price')->label('السعر الشهري')->numeric()->prefix('جنيه')->required(),
+                TextInput::make('yearly_price')->label('السعر السنوي')->numeric()->prefix('جنيه')->required(),
                 TextInput::make('max_users')->label('عدد المستخدمين')->numeric()->required(),
                 TextInput::make('icon')->label('الأيقونة'),
                 ColorPicker::make('color')->label('اللون'),
@@ -340,7 +340,7 @@ class ManageSubscriptionPlans extends Page implements HasTable, HasForms
                 TextInput::make('name')->label('الاسم بالعربية')->required(),
                 TextInput::make('name_en')->label('الاسم بالإنجليزية')->required(),
                 TextInput::make('percentage')->label('النسبة المئوية')->numeric()->suffix('%')->required(),
-                TextInput::make('fixed_fee')->label('الرسوم الثابتة')->numeric()->prefix('ريال')->required(),
+                TextInput::make('fixed_fee')->label('الرسوم الثابتة')->numeric()->prefix('جنيه')->required(),
                 TextInput::make('sort_order')->label('الترتيب')->numeric(),
             ],
             default => [],
