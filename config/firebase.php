@@ -51,4 +51,14 @@ return [
         'http_log_channel' => env('FIREBASE_HTTP_LOG_CHANNEL'),
         'http_debug_log_channel' => env('FIREBASE_HTTP_DEBUG_LOG_CHANNEL'),
     ],
+
+    /*
+     * ------------------------------------------------------------------------
+     * Firebase Cloud Messaging
+     * ------------------------------------------------------------------------
+     */
+    'fcm' => [
+        'sender_id' => env('FIREBASE_SENDER_ID', '832433207149'),
+        'web_push_key' => env('FIREBASE_WEB_PUSH_KEY', ''),
+    ],
 ];
