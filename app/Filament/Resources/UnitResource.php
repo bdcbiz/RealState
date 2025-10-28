@@ -321,6 +321,10 @@ class UnitResource extends Resource
                 Tables\Columns\TextColumn::make('compound_name')
                     ->label(__('units.fields.compound_name'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('company_salespeople')
+                    ->label('Company Salespeople')
+                    ->badge()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('compound_id')

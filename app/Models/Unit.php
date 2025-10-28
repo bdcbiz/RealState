@@ -107,7 +107,7 @@ class Unit extends Model
         'available',
         'images',
         'sales_id',
-        'buyer_id'
+        'buyer_id',
     ];
 
     protected $casts = [
@@ -117,7 +117,7 @@ class Unit extends Model
         'images' => 'array',
     ];
 
-    protected $appends = ['images_urls', 'unit_name_translated', 'unit_type_translated', 'usage_type_translated', 'status_translated', 'unit_name_localized', 'unit_type_localized', 'usage_type_localized', 'status_localized'];
+    protected $appends = ['images_urls', 'unit_name_translated', 'unit_type_translated', 'usage_type_translated', 'status_translated', 'unit_name_localized', 'unit_type_localized', 'usage_type_localized', 'status_localized', 'company_salespeople'];
 
     /**
      * Get processed image URLs
@@ -203,6 +203,22 @@ class Unit extends Model
     public function getStatusLocalizedAttribute()
     {
         return $this->getLocalized('status');
+    }
+
+    /**
+     * Get company salespeople IDs through compound relationship
+     */
+    public function getCompanySalespeopleAttribute()
+    {
+        if (!$this->compound || !$this->compound->company) {
+            return [];
+        }
+
+        return \DB::table('users')
+            ->where('company_id', $this->compound->company_id)
+            ->where('role', 'sales')
+            ->pluck('id')
+            ->toArray();
     }
 
     /**

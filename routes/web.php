@@ -23,12 +23,15 @@ Route::prefix('export')->name('export.')->group(function () {
     Route::get('/units-availability', [ExportController::class, 'exportUnitsAvailability'])->name('units-availability');
     Route::get('/merged-availability', [ExportController::class, 'exportMergedAvailability'])->name('merged-availability');
     Route::get('/comprehensive-data', [ExportController::class, 'exportComprehensiveData'])->name('comprehensive-data');
+    Route::get('/all-data', [ExportController::class, 'exportAllData'])->name('all-data');
 });
 
 // Excel Import Routes
 Route::prefix('import')->name('import.')->group(function () {
     Route::get('/merged-availability', [ExportController::class, 'showImportForm'])->name('merged-availability.form');
     Route::post('/merged-availability', [ExportController::class, 'importMergedAvailability'])->name('merged-availability');
+    Route::get('/all-data', [ExportController::class, 'showAllDataImportForm'])->name('all-data.form');
+    Route::post('/all-data', [ExportController::class, 'importAllData'])->name('all-data');
 });
 
 Route::get('/test-auth', function () {
