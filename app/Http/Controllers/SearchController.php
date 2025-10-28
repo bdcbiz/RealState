@@ -19,6 +19,7 @@ class SearchController extends Controller
     public function search(Request $request): JsonResponse
     {
         try {
+            $user = $request->user();
             $search = $request->get('search', '');
             $type = $request->get('type', ''); // 'company', 'compound', 'unit'
             $perPage = $request->get('per_page', 100);
@@ -171,11 +172,32 @@ class SearchController extends Controller
                 }
             }
 
+            // Increment search count for the user
+            if ($user && $user->role !== 'admin') {
+                $user->incrementSearchCount();
+            }
+
+            // Get subscription info
+            $subscriptionInfo = null;
+            if ($user) {
+                $subscription = $user->getCurrentSubscription();
+                if ($subscription) {
+                    $subscriptionInfo = [
+                        'plan_name' => $subscription->subscriptionPlan->name,
+                        'searches_used' => $subscription->searches_used,
+                        'search_limit' => $subscription->subscriptionPlan->search_limit,
+                        'remaining_searches' => $subscription->getRemainingSearches(),
+                        'expires_at' => $subscription->expires_at?->format('Y-m-d H:i:s'),
+                    ];
+                }
+            }
+
             return response()->json([
                 'status' => true,
                 'search_query' => $search,
                 'total_results' => count($results),
-                'results' => $results
+                'results' => $results,
+                'subscription' => $subscriptionInfo
             ], 200);
 
         } catch (\Exception $e) {
