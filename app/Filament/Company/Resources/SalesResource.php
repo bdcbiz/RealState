@@ -27,11 +27,17 @@ class SalesResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Company IS the authenticated user, so use auth()->user()?->company_id
-        // Only show sales users from this company
+        $user = auth()->user();
+
+        // Admin users can see all sales users
+        if ($user && $user->role === 'admin') {
+            return parent::getEloquentQuery()->where('role', 'sales');
+        }
+
+        // Company users see only their own sales users
         return parent::getEloquentQuery()
             ->where('role', 'sales')
-            ->where('company_id', auth()->user()?->company_id);
+            ->where('company_id', $user?->company_id);
     }
 
     public static function form(Form $form): Form

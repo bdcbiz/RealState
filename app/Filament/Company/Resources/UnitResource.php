@@ -23,12 +23,22 @@ class UnitResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Get the authenticated user's company_id
-        $companyId = auth()->user()?->company_id;
+        $user = auth()->user();
 
-        return parent::getEloquentQuery()->whereHas('compound', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        });
+        // Admin users can see all units
+        if ($user && $user->role === 'admin') {
+            return parent::getEloquentQuery();
+        }
+
+        // Company users see only their own units
+        $companyId = $user?->company_id;
+        if ($companyId) {
+            return parent::getEloquentQuery()->whereHas('compound', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            });
+        }
+
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
     }
 
     public static function form(Form $form): Form

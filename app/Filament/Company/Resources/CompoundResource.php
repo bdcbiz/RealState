@@ -23,14 +23,21 @@ class CompoundResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // Get the authenticated user's company_id
-        $companyId = auth()->user()?->company_id;
+        // Get the authenticated user
+        $user = auth()->user();
 
+        // Admin users can see all compounds
+        if ($user && $user->role === 'admin') {
+            return parent::getEloquentQuery();
+        }
+
+        // Company users see only their own compounds
+        $companyId = $user?->company_id;
         if ($companyId) {
             return parent::getEloquentQuery()->where('company_id', $companyId);
         }
 
-        // If no company_id, return empty result to avoid showing all compounds
+        // If no company_id and not admin, return empty result
         return parent::getEloquentQuery()->whereRaw('1 = 0');
     }
 

@@ -12,30 +12,32 @@ class CompanyStatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        // Company IS the authenticated user, so use auth()->user()?->company_id
-        $companyId = auth()->user()?->company_id;
+        $user = auth()->user();
+        $companyId = $user?->company_id;
 
-        // Count compounds
-        $totalCompounds = Compound::where('company_id', $companyId)->count();
-
-        // Count units
-        $totalUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        })->count();
-
-        // Count available and sold units
-        $availableUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        })->where('is_sold', 0)->count();
-
-        $soldUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
-            $query->where('company_id', $companyId);
-        })->where('is_sold', 1)->count();
-
-        // Count sales team members
-        $salesCount = User::where('company_id', $companyId)
-            ->where('role', 'sales')
-            ->count();
+        // Admin users see all data
+        if ($user && $user->role === 'admin') {
+            $totalCompounds = Compound::count();
+            $totalUnits = Unit::count();
+            $availableUnits = Unit::where('is_sold', 0)->count();
+            $soldUnits = Unit::where('is_sold', 1)->count();
+            $salesCount = User::where('role', 'sales')->count();
+        } else {
+            // Company users see only their data
+            $totalCompounds = Compound::where('company_id', $companyId)->count();
+            $totalUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })->count();
+            $availableUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })->where('is_sold', 0)->count();
+            $soldUnits = Unit::whereHas('compound', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })->where('is_sold', 1)->count();
+            $salesCount = User::where('company_id', $companyId)
+                ->where('role', 'sales')
+                ->count();
+        }
 
         return [
             Stat::make('Total Compounds', $totalCompounds)

@@ -14,12 +14,25 @@ class CompanyInfoWidget extends Widget
 
     public function getViewData(): array
     {
-        $company = auth()->user(); // Company IS the authenticated user
+        $user = auth()->user();
 
+        // For admin users, show system info
+        if ($user && $user->role === 'admin') {
+            return [
+                'company' => (object) [
+                    'name' => 'Admin Dashboard',
+                    'email' => $user->email,
+                    'logo' => null,
+                ],
+                'logoUrl' => null,
+            ];
+        }
+
+        // For company users, show their company info
         return [
-            'company' => $company,
-            'logoUrl' => $company && $company->logo
-                ? url('storage/' . $company->logo)
+            'company' => $user,
+            'logoUrl' => $user && $user->logo
+                ? url('storage/' . $user->logo)
                 : null,
         ];
     }

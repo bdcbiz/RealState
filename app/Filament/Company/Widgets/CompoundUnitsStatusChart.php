@@ -13,10 +13,18 @@ class CompoundUnitsStatusChart extends Widget
 
     public function getCompoundsData(): array
     {
-        $companyId = auth()->user()?->company_id; // Company IS the authenticated user
+        $user = auth()->user();
+        $companyId = $user?->company_id;
 
         // Get compounds with their unit statistics and sales count
-        $compounds = Compound::where('company_id', $companyId)
+        $compoundsQuery = Compound::query();
+
+        // Filter by company for non-admin users
+        if (!$user || $user->role !== 'admin') {
+            $compoundsQuery->where('company_id', $companyId);
+        }
+
+        $compounds = $compoundsQuery
             ->select('id', 'project')
             ->withCount([
                 'units as total_units',
