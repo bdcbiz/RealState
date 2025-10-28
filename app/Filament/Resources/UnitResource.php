@@ -238,9 +238,6 @@ class UnitResource extends Resource
                 Tables\Columns\TextColumn::make('unit_type')
                     ->label(__('units.fields.unit_type'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('unit_code')
-                    ->label(__('units.fields.unit_code'))
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('total_pricing')
                     ->label(__('units.fields.total_pricing'))
                     ->numeric()
