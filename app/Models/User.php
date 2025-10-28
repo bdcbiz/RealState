@@ -174,9 +174,10 @@ class User extends Authenticatable implements FilamentUser
             return $this->role === 'admin';
         }
 
-        // Company panel: only company users with company_id
+        // Company panel: company users with company_id OR admin (for supervision)
         if ($panel->getId() === 'company') {
-            return $this->role === 'company' && !is_null($this->company_id);
+            return $this->role === 'admin' ||
+                   ($this->role === 'company' && !is_null($this->company_id));
         }
 
         // Allow all authenticated users by default for other panels
