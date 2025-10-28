@@ -61,4 +61,15 @@ return [
         'sender_id' => env('FIREBASE_SENDER_ID', '832433207149'),
         'web_push_key' => env('FIREBASE_WEB_PUSH_KEY', ''),
     ],
+
+    /*
+     * ------------------------------------------------------------------------
+     * Firebase Android Configuration
+     * ------------------------------------------------------------------------
+     */
+    'android' => [
+        'api_key' => env('FIREBASE_ANDROID_API_KEY', ''),
+        'app_id' => env('FIREBASE_ANDROID_APP_ID', ''),
+        'package_name' => env('FIREBASE_ANDROID_PACKAGE', ''),
+    ],
 ];
