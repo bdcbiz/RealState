@@ -15,7 +15,7 @@ class FCMNotificationService
     public function __construct()
     {
         try {
-            $credentialsPath = storage_path(config('firebase.credentials.file'));
+            $credentialsPath = base_path(config('firebase.credentials.file'));
 
             if (!file_exists($credentialsPath)) {
                 Log::error('Firebase credentials file not found at: ' . $credentialsPath);
