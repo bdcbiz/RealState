@@ -25,3 +25,4 @@ Thumbs.db
 
 # Firebase credentials (contains secrets)
 /app/firebase/*.json
+storage/compound-images/

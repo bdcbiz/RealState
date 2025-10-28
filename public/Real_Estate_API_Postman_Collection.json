@@ -1,0 +1,1147 @@
+{
+	"info": {
+		"_postman_id": "real-estate-api-2025",
+		"name": "Real Estate API - Complete Collection",
+		"description": "Complete API collection for Real Estate Management System\nBase URL: https://aqar.bdcbiz.com/api\n\nLast Updated: 2025-10-22",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://aqar.bdcbiz.com/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"phone\": \"01234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": ["{{base_url}}"],
+							"path": ["register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": ["{{base_url}}"],
+							"path": ["login"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": ["{{base_url}}"],
+							"path": ["logout"]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user",
+							"host": ["{{base_url}}"],
+							"path": ["user"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Get All Companies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/companies",
+							"host": ["{{base_url}}"],
+							"path": ["companies"]
+						}
+					}
+				},
+				{
+					"name": "Get Company by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/companies/1",
+							"host": ["{{base_url}}"],
+							"path": ["companies", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Companies with Sales",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/companies-with-sales",
+							"host": ["{{base_url}}"],
+							"path": ["companies-with-sales"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Compounds",
+			"item": [
+				{
+					"name": "Get All Compounds",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/compounds",
+							"host": ["{{base_url}}"],
+							"path": ["compounds"]
+						}
+					}
+				},
+				{
+					"name": "Get Compound by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/compounds/1",
+							"host": ["{{base_url}}"],
+							"path": ["compounds", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Units",
+			"item": [
+				{
+					"name": "Get All Units",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/units",
+							"host": ["{{base_url}}"],
+							"path": ["units"]
+						}
+					}
+				},
+				{
+					"name": "Get Unit by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/units/1",
+							"host": ["{{base_url}}"],
+							"path": ["units", "1"]
+						}
+					}
+				},
+				{
+					"name": "Filter Units",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"compound_id\": 1,\n  \"unit_type\": \"Apartment\",\n  \"min_price\": 1000000,\n  \"max_price\": 5000000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/filter-units",
+							"host": ["{{base_url}}"],
+							"path": ["filter-units"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Sales",
+			"item": [
+				{
+					"name": "Get All Sales",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sales",
+							"host": ["{{base_url}}"],
+							"path": ["sales"]
+						}
+					}
+				},
+				{
+					"name": "Get Sale by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sales/1",
+							"host": ["{{base_url}}"],
+							"path": ["sales", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Activities",
+			"item": [
+				{
+					"name": "Get All Activities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/activities?per_page=20&company_id=2",
+							"host": ["{{base_url}}"],
+							"path": ["activities"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "20"
+								},
+								{
+									"key": "company_id",
+									"value": "2"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Recent Activities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/activities/recent?days=7&company_id=2",
+							"host": ["{{base_url}}"],
+							"path": ["activities", "recent"],
+							"query": [
+								{
+									"key": "days",
+									"value": "7"
+								},
+								{
+									"key": "company_id",
+									"value": "2"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Activity Statistics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/activities/stats?days=30&company_id=2",
+							"host": ["{{base_url}}"],
+							"path": ["activities", "stats"],
+							"query": [
+								{
+									"key": "days",
+									"value": "30"
+								},
+								{
+									"key": "company_id",
+									"value": "2"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Activity by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/activities/1",
+							"host": ["{{base_url}}"],
+							"path": ["activities", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Activities by Action",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/activities/action/created",
+							"host": ["{{base_url}}"],
+							"path": ["activities", "action", "created"]
+						}
+					}
+				},
+				{
+					"name": "Get Activities by Subject",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/activities/subject/Sale/1",
+							"host": ["{{base_url}}"],
+							"path": ["activities", "subject", "Sale", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"item": [
+				{
+					"name": "Search All",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/search?query=palm",
+							"host": ["{{base_url}}"],
+							"path": ["search"],
+							"query": [
+								{
+									"key": "query",
+									"value": "palm"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Stages",
+			"item": [
+				{
+					"name": "Get All Stages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/stages",
+							"host": ["{{base_url}}"],
+							"path": ["stages"]
+						}
+					}
+				},
+				{
+					"name": "Get Stage by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/stages/1",
+							"host": ["{{base_url}}"],
+							"path": ["stages", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Stage",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Stage 1\",\n  \"compound_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stages",
+							"host": ["{{base_url}}"],
+							"path": ["stages"]
+						}
+					}
+				},
+				{
+					"name": "Update Stage",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Stage 1 Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/stages/1",
+							"host": ["{{base_url}}"],
+							"path": ["stages", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Stage",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/stages/1",
+							"host": ["{{base_url}}"],
+							"path": ["stages", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User Profile",
+			"item": [
+				{
+					"name": "Get User by Email",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user-by-email?email=john@example.com",
+							"host": ["{{base_url}}"],
+							"path": ["user-by-email"],
+							"query": [
+								{
+									"key": "email",
+									"value": "john@example.com"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/profile",
+							"host": ["{{base_url}}"],
+							"path": ["profile"]
+						}
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe Updated\",\n  \"phone\": \"01234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/profile",
+							"host": ["{{base_url}}"],
+							"path": ["profile"]
+						}
+					}
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"current_password\": \"password123\",\n  \"new_password\": \"newpassword123\",\n  \"new_password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["change-password"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Salespeople",
+			"item": [
+				{
+					"name": "Get Salespeople by Compound",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/salespeople-by-compound?compound_id=1",
+							"host": ["{{base_url}}"],
+							"path": ["salespeople-by-compound"],
+							"query": [
+								{
+									"key": "compound_id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Get Favorites",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/favorites",
+							"host": ["{{base_url}}"],
+							"path": ["favorites"]
+						}
+					}
+				},
+				{
+					"name": "Add to Favorites",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"unit_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/favorites",
+							"host": ["{{base_url}}"],
+							"path": ["favorites"]
+						}
+					}
+				},
+				{
+					"name": "Remove from Favorites",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"unit_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/favorites",
+							"host": ["{{base_url}}"],
+							"path": ["favorites"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Get Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["statistics"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Saved Searches",
+			"item": [
+				{
+					"name": "Get All Saved Searches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saved-searches",
+							"host": ["{{base_url}}"],
+							"path": ["saved-searches"]
+						}
+					}
+				},
+				{
+					"name": "Get Saved Search by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saved-searches/1",
+							"host": ["{{base_url}}"],
+							"path": ["saved-searches", "1"]
+						}
+					}
+				},
+				{
+					"name": "Create Saved Search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Palm Hills Units\",\n  \"search_params\": {\n    \"compound_id\": 1,\n    \"min_price\": 1000000\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saved-searches",
+							"host": ["{{base_url}}"],
+							"path": ["saved-searches"]
+						}
+					}
+				},
+				{
+					"name": "Update Saved Search",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Palm Hills Units Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/saved-searches/1",
+							"host": ["{{base_url}}"],
+							"path": ["saved-searches", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Saved Search",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/saved-searches/1",
+							"host": ["{{base_url}}"],
+							"path": ["saved-searches", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Unit Types",
+			"item": [
+				{
+					"name": "Get All Unit Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/unit-types",
+							"host": ["{{base_url}}"],
+							"path": ["unit-types"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Unit Areas",
+			"item": [
+				{
+					"name": "Get Unit Areas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/unit-areas",
+							"host": ["{{base_url}}"],
+							"path": ["unit-areas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Finish Specs",
+			"item": [
+				{
+					"name": "Get All Finish Specs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/finish-specs",
+							"host": ["{{base_url}}"],
+							"path": ["finish-specs"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Share Links",
+			"item": [
+				{
+					"name": "Get Share Link Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/share-link?type=unit&id=1",
+							"host": ["{{base_url}}"],
+							"path": ["share-link"],
+							"query": [
+								{
+									"key": "type",
+									"value": "unit"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "FCM Notifications",
+			"item": [
+				{
+					"name": "Store FCM Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"firebase-device-token-here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/fcm-token",
+							"host": ["{{base_url}}"],
+							"path": ["fcm-token"]
+						}
+					}
+				},
+				{
+					"name": "Delete FCM Token",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"firebase-device-token-here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/fcm-token",
+							"host": ["{{base_url}}"],
+							"path": ["fcm-token"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Units",
+			"item": [
+				{
+					"name": "Create Unit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"compound_id\": 1,\n  \"unit_code\": \"A-101\",\n  \"unit_type\": \"Apartment\",\n  \"normal_price\": 2500000,\n  \"number_of_beds\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/units",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "units"]
+						}
+					}
+				},
+				{
+					"name": "Update Unit",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"normal_price\": 2600000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/units/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "units", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Unit",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/units/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "units", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Sales",
+			"item": [
+				{
+					"name": "Create Sale",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"company_id\": 2,\n  \"sale_type\": \"unit\",\n  \"unit_id\": 1,\n  \"sale_name\": \"Summer Sale 2025\",\n  \"description\": \"Special summer discount\",\n  \"discount_percentage\": 15,\n  \"start_date\": \"2025-06-01\",\n  \"end_date\": \"2025-08-31\",\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/sales",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "sales"]
+						}
+					}
+				},
+				{
+					"name": "Update Sale",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"discount_percentage\": 20,\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/sales/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "sales", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Sale",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/sales/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "sales", "1"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

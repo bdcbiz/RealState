@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Web CORS Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #667eea;
+            margin-top: 25px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 2px solid #bee5eb;
+            color: #0c5460;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-badge.ok { background: #28a745; color: white; }
+        .status-badge.fail { background: #dc3545; color: white; }
+        .instruction {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Flutter Web CORS Diagnostic Tool</h1>
+        <p>This page tests the <strong>exact same requests</strong> your Flutter Web app is making to identify CORS issues.</p>
+
+        <div class="instruction">
+            <strong>📋 Instructions:</strong><br>
+            1. Open this page in the <strong>same browser</strong> you're using for Flutter Web<br>
+            2. Run all tests in sequence<br>
+            3. If tests pass here but fail in Flutter → Dio configuration issue<br>
+            4. If tests fail here → Server/CORS configuration issue
+        </div>
+
+        <!-- Test 1: Simple CORS Test -->
+        <div class="test-section">
+            <h3>Test 1: Simple GET Request (Baseline)</h3>
+            <p>Tests basic connectivity to the API server</p>
+            <button onclick="testSimpleGet()">▶ Run Test 1</button>
+            <div id="test1-result"></div>
+        </div>
+
+        <!-- Test 2: POST to Test Endpoint -->
+        <div class="test-section">
+            <h3>Test 2: POST to Test Endpoint</h3>
+            <p>Tests POST request with CORS to a simple endpoint (no authentication)</p>
+            <button onclick="testSimplePost()">▶ Run Test 2</button>
+            <div id="test2-result"></div>
+        </div>
+
+        <!-- Test 3: Login Request (Same as Flutter) -->
+        <div class="test-section">
+            <h3>Test 3: Login Request (Identical to Flutter)</h3>
+            <p>Tests the <strong>exact same request</strong> your Flutter Web app is making</p>
+            <input type="email" id="email" placeholder="Email" value="malak@gmail.com">
+            <input type="password" id="password" placeholder="Password" value="Malak_2003!">
+            <button onclick="testLogin()">▶ Run Test 3 (Login)</button>
+            <div id="test3-result"></div>
+        </div>
+
+        <!-- Test 4: Detailed Network Analysis -->
+        <div class="test-section">
+            <h3>Test 4: Network & CORS Headers Analysis</h3>
+            <p>Analyzes CORS headers and network configuration</p>
+            <button onclick="testHeaders()">▶ Run Test 4</button>
+            <div id="test4-result"></div>
+        </div>
+
+        <!-- Browser Info -->
+        <div class="test-section">
+            <h3>ℹ️ Browser Information</h3>
+            <div id="browser-info" class="result info"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://aqar.bdcbiz.com/api';
+
+        // Display browser info
+        function displayBrowserInfo() {
+            const info = {
+                'Page URL': window.location.href,
+                'Protocol': window.location.protocol,
+                'User Agent': navigator.userAgent,
+                'Online Status': navigator.onLine ? 'Online' : 'Offline',
+                'API Base URL': API_BASE,
+                'Browser Language': navigator.language,
+                'Cookies Enabled': navigator.cookieEnabled
+            };
+            document.getElementById('browser-info').textContent = JSON.stringify(info, null, 2);
+        }
+
+        // Test 1: Simple GET
+        async function testSimpleGet() {
+            const resultDiv = document.getElementById('test1-result');
+            resultDiv.innerHTML = '<p>⏳ Running Test 1...</p>';
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch(`${API_BASE}/test-cors`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const endTime = performance.now();
+                const data = await response.json();
+
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <strong>✅ Test 1 PASSED</strong><br>
+                        <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Response Time:</strong> ${Math.round(endTime - startTime)}ms<br>
+                        <strong>Response:</strong><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <br>
+                        <strong>Analysis:</strong> Basic GET request works ✅
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Test 1 FAILED</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <br>
+                        <strong>Analysis:</strong> Cannot connect to server. Check:<br>
+                        • Internet connection<br>
+                        • Server is running<br>
+                        • Firewall settings
+                    </div>
+                `;
+            }
+        }
+
+        // Test 2: Simple POST
+        async function testSimplePost() {
+            const resultDiv = document.getElementById('test2-result');
+            resultDiv.innerHTML = '<p>⏳ Running Test 2...</p>';
+
+            try {
+                const startTime = performance.now();
+                const response = await fetch(`${API_BASE}/test-cors`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ test: 'data', source: 'browser-test' })
+                });
+                const endTime = performance.now();
+                const data = await response.json();
+
+                // Get CORS headers
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <strong>✅ Test 2 PASSED</strong><br>
+                        <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Response Time:</strong> ${Math.round(endTime - startTime)}ms<br>
+                        <br>
+                        <strong>CORS Headers Received:</strong><br>
+                        <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        <br>
+                        <strong>Response Data:</strong><br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <br>
+                        <strong>Analysis:</strong> POST request with CORS works ✅<br>
+                        The server is configured correctly for CORS!
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Test 2 FAILED</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <strong>Error Type:</strong> ${error.name}<br>
+                        <br>
+                        <strong>Analysis:</strong> POST request failed. Possible causes:<br>
+                        • CORS not configured for POST requests<br>
+                        • Browser blocking the request<br>
+                        • Network error<br>
+                        <br>
+                        <strong>❗ This is the same error Flutter Web is experiencing!</strong>
+                    </div>
+                `;
+            }
+        }
+
+        // Test 3: Login (Same as Flutter)
+        async function testLogin() {
+            const resultDiv = document.getElementById('test3-result');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            resultDiv.innerHTML = '<p>⏳ Running Test 3 (Login)...</p>';
+
+            try {
+                const startTime = performance.now();
+
+                console.log('*** Making login request ***');
+                console.log('URL:', `${API_BASE}/login`);
+                console.log('Method: POST');
+                console.log('Data:', { email, password: '***' });
+
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const endTime = performance.now();
+                const data = await response.json();
+
+                console.log('*** Response received ***');
+                console.log('Status:', response.status);
+                console.log('Data:', data);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <strong>✅ Test 3 PASSED - Login Successful!</strong><br>
+                            <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                            <strong>Response Time:</strong> ${Math.round(endTime - startTime)}ms<br>
+                            <br>
+                            <strong>Response:</strong><br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <br>
+                            <strong>✅ Analysis:</strong><br>
+                            • Login endpoint works correctly<br>
+                            • CORS is working for login<br>
+                            • Server authentication is working<br>
+                            <br>
+                            <strong>🔧 Flutter Web Issue Diagnosis:</strong><br>
+                            Since login works in this browser test but fails in Flutter Web,
+                            the issue is in your <strong>Dio configuration</strong> in Flutter.<br>
+                            <br>
+                            Check your Flutter app's Dio setup!
+                        </div>
+                    `;
+                } else {
+                    // Login failed (wrong credentials) but request went through
+                    resultDiv.innerHTML = `
+                        <div class="result warning">
+                            <strong>⚠️ Test 3: Request Successful, Credentials Invalid</strong><br>
+                            <strong>Status:</strong> ${response.status} ${response.statusText}<br>
+                            <strong>Response Time:</strong> ${Math.round(endTime - startTime)}ms<br>
+                            <br>
+                            <strong>Response:</strong><br>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <br>
+                            <strong>✅ Good News:</strong><br>
+                            • The request reached the server<br>
+                            • CORS is working correctly<br>
+                            • Server responded properly<br>
+                            • Only the credentials are wrong<br>
+                            <br>
+                            <strong>🔧 Flutter Web Issue Diagnosis:</strong><br>
+                            Since the server responds here but Flutter Web gets connection error,
+                            the issue is in your <strong>Flutter Dio client configuration</strong>.<br>
+                            <br>
+                            <strong>Action:</strong> Check Dio baseOptions, timeout settings, and headers!
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('*** Login request failed ***', error);
+
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Test 3 FAILED - Connection Error</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <strong>Error Type:</strong> ${error.name}<br>
+                        <br>
+                        <strong>❗ This is the exact same error Flutter Web is getting!</strong><br>
+                        <br>
+                        <strong>Analysis:</strong><br>
+                        • Request was blocked before completion<br>
+                        • Network layer error<br>
+                        • CORS preflight might be failing<br>
+                        <br>
+                        <strong>Possible Causes:</strong><br>
+                        • Browser blocking mixed content<br>
+                        • CORS preflight OPTIONS request failing<br>
+                        • SSL certificate issue<br>
+                        • Browser extension interfering<br>
+                        • Corporate firewall blocking POST requests<br>
+                        <br>
+                        <strong>Next Steps:</strong><br>
+                        1. Open browser DevTools (F12)<br>
+                        2. Go to Network tab<br>
+                        3. Try the request again<br>
+                        4. Look for the login request<br>
+                        5. Check if there's an OPTIONS request first<br>
+                        6. See the exact error in the Console tab
+                    </div>
+                `;
+            }
+        }
+
+        // Test 4: Headers Analysis
+        async function testHeaders() {
+            const resultDiv = document.getElementById('test4-result');
+            resultDiv.innerHTML = '<p>⏳ Running Test 4...</p>';
+
+            try {
+                // Test OPTIONS preflight
+                const optionsResponse = await fetch(`${API_BASE}/login`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'content-type,accept'
+                    }
+                });
+
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': optionsResponse.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': optionsResponse.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': optionsResponse.headers.get('Access-Control-Allow-Headers'),
+                    'Access-Control-Max-Age': optionsResponse.headers.get('Access-Control-Max-Age')
+                };
+
+                const allCorsPresent = Object.values(corsHeaders).every(h => h !== null && h !== undefined);
+
+                resultDiv.innerHTML = `
+                    <div class="result ${allCorsPresent ? 'success' : 'error'}">
+                        <strong>${allCorsPresent ? '✅' : '❌'} Test 4: CORS Headers Analysis</strong><br>
+                        <br>
+                        <strong>OPTIONS Preflight Response:</strong><br>
+                        Status: ${optionsResponse.status} ${optionsResponse.statusText}<br>
+                        <br>
+                        <strong>CORS Headers:</strong><br>
+                        <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        <br>
+                        <strong>Analysis:</strong><br>
+                        ${allCorsPresent ?
+                            '✅ All required CORS headers are present<br>✅ Server is configured correctly for CORS<br>✅ Preflight requests should succeed' :
+                            '❌ Some CORS headers are missing<br>⚠️ Server CORS configuration needs fixing'
+                        }
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Test 4 FAILED</strong><br>
+                        <strong>Error:</strong> ${error.message}<br>
+                        <br>
+                        <strong>Analysis:</strong> OPTIONS preflight request failed<br>
+                        This will prevent POST requests from working.
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            displayBrowserInfo();
+            console.log('🧪 Flutter Web CORS Diagnostic Tool Ready');
+            console.log('Run tests in sequence to diagnose the issue');
+        });
+    </script>
+</body>
+</html>
