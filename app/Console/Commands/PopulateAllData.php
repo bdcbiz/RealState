@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\AllData;
 use App\Models\Unit;
+use App\Services\FCMNotificationService;
 use Illuminate\Console\Command;
 
 class PopulateAllData extends Command
@@ -199,5 +200,26 @@ class PopulateAllData extends Command
         $bar->finish();
         $this->newLine(2);
         $this->info("✓ Successfully inserted {$inserted} records into all_data table");
+
+        // Send FCM notification to admins about the import completion
+        try {
+            $fcmService = new FCMNotificationService();
+
+            $title = "Data Import Completed!";
+            $body = "{$inserted} records have been successfully imported into the system";
+
+            $data = [
+                'type' => 'data_imported',
+                'records_count' => (string)$inserted,
+                'timestamp' => now()->toDateTimeString(),
+            ];
+
+            // Send to all users
+            $fcmService->sendToAllUsers($title, $body, $data);
+
+            $this->info("✓ Notification sent to all users");
+        } catch (\Exception $e) {
+            $this->warn("⚠ Failed to send notification: " . $e->getMessage());
+        }
     }
 }
